@@ -1,6 +1,6 @@
 const Farm = artifacts.require('./Farm.sol');
-const ERC20 = artifacts.require('./ERC20Mock.sol');
-const LP = artifacts.require('./LPMock.sol');
+const ERC20 = artifacts.require('./mock/ERC20Mock.sol');
+const LP = artifacts.require('./mock/LPMock.sol');
 const { waitUntilBlock } = require('./helpers/tempo')(web3);
 
 contract('Farm', ([owner, alice, bob, carl]) => {

@@ -1,7 +1,11 @@
 const NFTFarm = artifacts.require('./NFTFarm.sol');
-const ERC20 = artifacts.require('./ERC20Mock.sol');
-const NFT = artifacts.require('./NFTMock.sol');
+const ERC1155 = artifacts.require('./core/ERC1155Mock.sol');
+const ERC20 = artifacts.require('./core/ERC20Mock.sol');
+const NFT1155 = artifacts.require('./NFTMock.sol');
 const { waitUntilBlock } = require('./helpers/tempo')(web3);
+const NFT1 = 1, NFT1Weight = 10;
+const NFT2 = 2, NFT2Weight = 10;
+const NFT3 = 3, NFT3Weight = 20;
 
 contract('Farm', ([owner, alice, bob, carl]) => {
     before(async () => {
@@ -9,30 +13,48 @@ contract('Farm', ([owner, alice, bob, carl]) => {
         let balance = await this.erc20.balanceOf(owner);
         assert.equal(balance.valueOf(), 1000000);
 
-        this.nft = await NFT.new(10000);
-        this.nft2 = await NFT.new(10000);
+        // this.nft = await NFT.new(10000);
+        // this.nft2 = await NFT.new(10000);
+
+        this.n1155 = await NFT1155.new("NFT1155", "NFTs", "")
+
+        this.n1155.mint(owner, NFT1, 10000)
+        this.n1155.mint(owner, NFT2, 5000)
+        this.n1155.mint(owner, NFT3, 2000)
 
         const currentBlock = await web3.eth.getBlockNumber();
         this.startBlock = currentBlock + 100;
 
         this.farm = await NFTFarm.new(this.erc20.address, 100, this.startBlock);
-        this.farm.add(15, this.nft.address, false);
+        this.farm.add(NFT1Weight, this.n1155.address, NFT1, false);
+        // this.farm.add(NFT2Weight, this.n1155.address, NFT2, false);
+        // this.farm.add(NFT3Weight, this.n1155.address, NFT3, false);
 
         await this.erc20.approve(this.farm.address, 10000);
         await this.farm.fund(10000);
     });
 
     before(async () => {
+        const [balance1, balance2, balance3] = await Promise.all([
+            this.n1155.balanceOf(owner, NFT1),
+            this.n1155.balanceOf(owner, NFT2),
+            this.n1155.balanceOf(owner, NFT3),
+        ]);
+
+        assert.equal(10000, balance1);
+        assert.equal(5000, balance2);
+        assert.equal(2000, balance3);
+
         await Promise.all([
-            this.nft.mint(alice, 5000),
-            this.nft.mint(bob, 500),
-            this.nft.mint(carl, 2000),
+            this.n1155.transferInternal(owner, alice, NFT1, 5000),
+            this.n1155.transferInternal(owner, bob, NFT1, 500),
+            this.n1155.transferInternal(owner, carl, NFT1, 2000),
         ]);
 
         const [balanceAlice, balanceBob, balanceCarl] = await Promise.all([
-            this.nft.balanceOf(alice, 1),
-            this.nft.balanceOf(bob, 1),
-            this.nft.balanceOf(carl, 1),
+            this.n1155.balanceOf(alice, NFT1),
+            this.n1155.balanceOf(bob, NFT1),
+            this.n1155.balanceOf(carl, NFT1),
         ]);
 
         assert.equal(5000, balanceAlice);
@@ -42,16 +64,15 @@ contract('Farm', ([owner, alice, bob, carl]) => {
 
     before(async () => {
         await Promise.all([
-            this.nft2.mint(alice, 1000),
-            this.nft2.mint(carl, 800),
+            this.n1155.transferInternal(owner, alice, NFT2, 1000),
+            this.n1155.transferInternal(owner, carl, NFT2, 800),
         ]);
 
         const [balanceAlice, balanceBob, balanceCarl] = await Promise.all([
-            this.nft2.balanceOf(alice, 1),
-            this.nft2.balanceOf(bob, 1),
-            this.nft2.balanceOf(carl, 1),
+            this.n1155.balanceOf(alice, NFT2),
+            this.n1155.balanceOf(bob, NFT2),
+            this.n1155.balanceOf(carl, NFT2),
         ]);
-        console.log(balanceAlice, balanceBob, balanceCarl);
         assert.equal(1000, balanceAlice);
         assert.equal(0, balanceBob);
         assert.equal(800, balanceCarl);
@@ -79,11 +100,12 @@ contract('Farm', ([owner, alice, bob, carl]) => {
             assert.equal(1, poolLength);
 
             const poolInfo = await this.farm.poolInfo(0);
-            assert.equal(poolInfo[0], this.nft.address);
-            assert.equal(poolInfo[1].words[0], 15);
+            assert.equal(poolInfo[0], this.n1155.address);
+            assert.equal(poolInfo[1].words[0], NFT1);
+            assert.equal(poolInfo[2].words[0], 10);
 
             const totalAllocPoint = await this.farm.totalAllocPoint();
-            assert.equal(totalAllocPoint, 15);
+            assert.equal(totalAllocPoint, 10);
         });
 
         it('holds 10,000 MOCK', async () => {
@@ -101,8 +123,8 @@ contract('Farm', ([owner, alice, bob, carl]) => {
     describe('before the start block', () => {
         before(async () => {
             await Promise.all([
-                this.nft.setApprovalForAll(this.farm.address, true, {from: alice}),
-                this.nft.setApprovalForAll(this.farm.address, true, {from: bob })
+                this.n1155.setApprovalForAll(this.farm.address, true, {from: alice}),
+                this.n1155.setApprovalForAll(this.farm.address, true, {from: bob })
             ]);
 
             await Promise.all([
@@ -112,15 +134,15 @@ contract('Farm', ([owner, alice, bob, carl]) => {
         });
 
         it('allows participants to join', async () => {
-            const balanceFarm = await this.nft.balanceOf(this.farm.address, 1);
+            const balanceFarm = await this.n1155.balanceOf(this.farm.address, NFT1);
             assert.equal(2000, balanceFarm);
 
-            const balanceAlice = await this.nft.balanceOf(alice, 1);
+            const balanceAlice = await this.n1155.balanceOf(alice, NFT1);
             const depositAlice = await this.farm.deposited(0, alice);
             assert.equal(3500, balanceAlice);
             assert.equal(1500, depositAlice);
 
-            const balanceBob = await this.nft.balanceOf(bob, 1);
+            const balanceBob = await this.n1155.balanceOf(bob, NFT1);
             const depositBob = await this.farm.deposited(0, bob);
             assert.equal(0, balanceBob);
             assert.equal(500, depositBob);
@@ -144,11 +166,147 @@ contract('Farm', ([owner, alice, bob, carl]) => {
 
         it('reserved 750 for alice and 250 for bob', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(750, pendingAlice);
+            assert.equal(750, pendingAlice); 
 
             const pendingBob = await this.farm.pending(0, bob);
             assert.equal(250, pendingBob);
         });
     });
 
+    describe('with a 3th participant after 30 blocks', () => {
+        before(async () => {
+            await waitUntilBlock(10, this.startBlock + 28);
+
+            await this.n1155.setApprovalForAll(this.farm.address, true, {from: carl});
+            await this.farm.deposit(0, 2000, {from: carl});
+        });
+
+        it('has a total reward of 3000 MOCK pending', async () => {
+            const totalPending = await this.farm.totalPending();
+            assert.equal(3000, totalPending);
+        });
+
+        it('reserved 2250 for alice, 750 for bob, and nothing for carl', async () => {
+            const pendingAlice = await this.farm.pending(0, alice);
+            assert.equal(2250, pendingAlice);
+
+            const pendingBob = await this.farm.pending(0, bob);
+            assert.equal(750, pendingBob);
+
+            const pendingCarl = await this.farm.pending(0, carl);
+            assert.equal(0, pendingCarl);
+        });
+    });
+
+    describe('when it receives more funds (8000 MOCK)', () => {
+        before(async () => {
+            await this.erc20.approve(this.farm.address, 8000);
+            await this.farm.fund(8000);
+        });
+
+        it('runs for 180 blocks (80 more)', async () => {
+            const endBlock = await this.farm.endBlock();
+            assert.equal(180, endBlock - this.startBlock);
+        });
+    });
+
+    describe('with an added lp token (for 25%) after 100 blocks', () => {
+        before(async () => {
+            await waitUntilBlock(10, this.startBlock + 99);
+            await this.farm.add(NFT2Weight, this.n1155.address, NFT2, true);
+        });
+
+        it('has a total reward of 10000 MOCK pending', async () => {
+            const totalPending = await this.farm.totalPending();
+            assert.equal(10000, totalPending);
+        });
+
+        it('is initialized for the LP token 2', async () => {
+            const poolLength = await this.farm.poolLength();
+            assert.equal(2, poolLength);
+
+            const poolInfo = await this.farm.poolInfo(1);
+            assert.equal(poolInfo[0], this.n1155.address);
+            assert.equal(poolInfo[2].words[0], NFT2Weight);
+
+            const totalAllocPoint = await this.farm.totalAllocPoint();
+            assert.equal(totalAllocPoint, 20);
+        });
+
+        it('reserved nothing for alice, 2450 for bob, and 1000 for carl', async () => {
+            const pendingAlice = await this.farm.pending(0, alice);
+            assert.equal(4875, pendingAlice);
+
+            const pendingBob = await this.farm.pending(0, bob);
+            assert.equal(1625, pendingBob);
+
+            const pendingCarl = await this.farm.pending(0, carl);
+            assert.equal(3500, pendingCarl);
+        });
+    });
+
+    describe('with 1st participant for lp2 after 110 blocks', () => {
+        before(async () => {
+            await waitUntilBlock(10, this.startBlock + 109);
+            
+            // await this.lp2.approve(this.farm.address, 500, { from: carl });
+            await this.farm.deposit(1, 500, {from: carl});
+        });
+
+        it('holds 4000 LP for the participants', async () => {
+            const balanceFarm = await this.n1155.balanceOf(this.farm.address, NFT1);
+            assert.equal(4000, balanceFarm);
+
+            const depositAlice = await this.farm.deposited(0, alice);
+            assert.equal(1500, depositAlice);
+
+            const depositBob = await this.farm.deposited(0, bob);
+            assert.equal(500, depositBob);
+
+            const depositCarl = await this.farm.deposited(0, carl);
+            assert.equal(2000, depositCarl);
+        });
+
+        it('holds 500 LP2 for the participants', async () => {
+            const balanceFarm = await this.n1155.balanceOf(this.farm.address, NFT2);
+            assert.equal(500, balanceFarm);
+
+            const depositAlice = await this.farm.deposited(1, alice);
+            assert.equal(0, depositAlice);
+
+            const depositBob = await this.farm.deposited(1, bob);
+            assert.equal(0, depositBob);
+
+            const depositCarl = await this.farm.deposited(1, carl);
+            assert.equal(500, depositCarl);
+        });
+
+        it('has a total reward of 11000 MOCK pending', async () => {
+            const totalPending = await this.farm.totalPending();
+            assert.equal(11000, totalPending);
+        });
+
+        it('reserved 50% for LP (37/12/50 bob/carl)', async () => {
+            const pendingAlice = await this.farm.pending(0, alice);
+            assert.equal(5062, pendingAlice);
+
+            const pendingBob = await this.farm.pending(0, bob);
+            assert.equal(1687, pendingBob);
+
+            const pendingCarl = await this.farm.pending(0, carl);
+            assert.equal(3750, pendingCarl);
+        });
+
+        it('reserved 50% for NFT2 (not rewarded) -> 500 MOCK inaccessible', async () => {
+            const pendingAlice = await this.farm.pending(1, alice);
+            assert.equal(0, pendingAlice);
+
+            const pendingBob = await this.farm.pending(1, bob);
+            assert.equal(0, pendingBob);
+
+            const pendingCarl = await this.farm.pending(1, carl);
+            assert.equal(0, pendingCarl);
+        });
+    });
+    
 });

@@ -36,6 +36,7 @@ contract NFTFarm is Ownable {
     // Info of lp pool.
     struct PoolInfo {
         IERC1155 nftToken;             // Address of LP token contract.
+        uint256 id;               // tokenid of 1155
         uint256 allocPoint;         // How many allocation points assigned to this pool. ERC20s to distribute per block.
         uint256 lastRewardBlock;    // Last block number that ERC20s distribution occurs.
         uint256 accERC20PerShare;   // Accumulated ERC20s per share, times 1e36.
@@ -87,7 +88,7 @@ contract NFTFarm is Ownable {
 
     // Add a new lp to the pool. Can only be called by the owner.
     // DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    function add(uint256 _allocPoint, IERC1155 _nftToken, bool _withUpdate) public onlyOwner {
+    function add(uint256 _allocPoint, IERC1155 _nftToken, uint256 _id, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
@@ -96,6 +97,7 @@ contract NFTFarm is Ownable {
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
             nftToken: _nftToken,
+            id: _id,
             allocPoint: _allocPoint,
             lastRewardBlock: lastRewardBlock,
             accERC20PerShare: 0
@@ -123,7 +125,7 @@ contract NFTFarm is Ownable {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
         uint256 accERC20PerShare = pool.accERC20PerShare;
-        uint256 lpSupply = pool.nftToken.balanceOf(address(this), 1);
+        uint256 lpSupply = pool.nftToken.balanceOf(address(this), pool.id);
 
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 lastBlock = block.number < endBlock ? block.number : endBlock;
@@ -161,7 +163,7 @@ contract NFTFarm is Ownable {
         if (lastBlock <= pool.lastRewardBlock) {
             return;
         }
-        uint256 lpSupply = pool.nftToken.balanceOf(address(this), 1);
+        uint256 lpSupply = pool.nftToken.balanceOf(address(this), pool.id);
         if (lpSupply == 0) {
             pool.lastRewardBlock = lastBlock;
             return;
@@ -185,7 +187,7 @@ contract NFTFarm is Ownable {
             erc20Transfer(msg.sender, pendingAmount);
         }
 
-        pool.nftToken.safeTransferFrom(address(msg.sender), address(this), 1, _amount, "");
+        pool.nftToken.safeTransferFrom(address(msg.sender), address(this), pool.id, _amount, "");
         user.amount += _amount;
         user.rewardDebt = user.amount.mul(pool.accERC20PerShare).div(1e36);
         emit Deposit(msg.sender, _pid, _amount);
@@ -201,7 +203,7 @@ contract NFTFarm is Ownable {
         erc20Transfer(msg.sender, pendingAmount);
         user.amount = user.amount.sub(_amount);
         user.rewardDebt = user.amount.mul(pool.accERC20PerShare).div(1e36);
-        pool.nftToken.safeTransferFrom(address(this), address(msg.sender), 1, _amount, "");
+        pool.nftToken.safeTransferFrom(address(this), address(msg.sender), pool.id, _amount, "");
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
@@ -209,7 +211,7 @@ contract NFTFarm is Ownable {
     function emergencyWithdraw(uint256 _pid) public {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
-        pool.nftToken.safeTransferFrom(address(this), address(msg.sender), 1, user.amount, "");
+        pool.nftToken.safeTransferFrom(address(this), address(msg.sender), pool.id, user.amount, "");
         emit EmergencyWithdraw(msg.sender, _pid, user.amount);
         user.amount = 0;
         user.rewardDebt = 0;
