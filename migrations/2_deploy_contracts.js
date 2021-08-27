@@ -1,6 +1,6 @@
 const ERC20 = artifacts.require("./mock/ERC20Mock.sol");
 const LP = artifacts.require('./mock/LPMock.sol');
-const Farm = artifacts.require("./Farm.sol");
+const LPFarm = artifacts.require("./LPFarm.sol");
 const allConfigs = require("../config.json");
 
 module.exports = function(deployer, network, addresses) {
@@ -11,6 +11,7 @@ module.exports = function(deployer, network, addresses) {
   }
 
   const erc20 = config.erc20;
+  let rainbowBlocks = 100;
   
   let deploy = deployer;
   
@@ -37,9 +38,10 @@ module.exports = function(deployer, network, addresses) {
           || web3.utils.toBN(currentBlock).add(web3.utils.toBN(config.delay));
 
       return deployer.deploy(
-        Farm,
+        LPFarm,
         erc20.address || ERC20.address,
         web3.utils.toBN(config.rewardPerBlock),
+        rainbowBlocks,
         startBlock
       );
     });
@@ -52,9 +54,9 @@ module.exports = function(deployer, network, addresses) {
             : ERC20.deployed();
         })
         .then((erc20Instance) => {
-          return erc20Instance.approve(Farm.address, web3.utils.toBN(config.fund));
+          return erc20Instance.approve(LPFarm.address, web3.utils.toBN(config.fund));
         })
-        .then(() => { return Farm.deployed(); })
+        .then(() => { return LPFarm.deployed(); })
         .then((farmInstance) => {
           return farmInstance.fund(web3.utils.toBN(config.fund));
         });
@@ -87,7 +89,7 @@ module.exports = function(deployer, network, addresses) {
       }
 
       deploy = deploy
-        .then(() => { return Farm.deployed(); })
+        .then(() => { return LPFarm.deployed(); })
         .then((farmInstance) => {
           return farmInstance.add(
             token.allocPoint,

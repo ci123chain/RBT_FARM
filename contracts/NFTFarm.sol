@@ -49,6 +49,9 @@ contract NFTFarm is Ownable {
     uint256 public paidOut = 0;
     // ERC20 tokens rewarded per block.
     uint256 public rewardPerBlock;
+    uint256 public rainbowBlocks;
+    uint256 public rainbowDeadline;
+    uint256 public rainbowRate = 2;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -66,10 +69,12 @@ contract NFTFarm is Ownable {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
-    constructor(IERC20 _erc20, uint256 _rewardPerBlock, uint256 _startBlock) public {
+    constructor(IERC20 _erc20, uint256 _rewardPerBlock, uint256 _rainbowBlocks,  uint256 _startBlock) public {
         erc20 = _erc20;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
+        rainbowBlocks = _rainbowBlocks;
+        rainbowDeadline = startBlock + _rainbowBlocks;
         endBlock = _startBlock;
     }
 
@@ -83,7 +88,19 @@ contract NFTFarm is Ownable {
         require(block.number < endBlock, "fund: too late, the farm is closed");
 
         erc20.safeTransferFrom(address(msg.sender), address(this), _amount);
-        endBlock += _amount.div(rewardPerBlock);
+
+        if (endBlock < rainbowDeadline) {
+            uint256 rainbowLeftBlocks = rainbowDeadline - endBlock;
+            uint256 rainbowLeftAward = rainbowLeftBlocks.mul(rewardPerBlock).mul(rainbowRate);
+            if (_amount < rainbowLeftAward ) {
+                endBlock += _amount.div(rewardPerBlock).div(rainbowRate);
+            } else {
+                uint256 normalAward = _amount - rainbowLeftAward;
+                endBlock += rainbowLeftBlocks + normalAward.div(rewardPerBlock);
+            }
+        } else {
+            endBlock = endBlock + _amount.div(rewardPerBlock);
+        }
     }
 
     // Add a new lp to the pool. Can only be called by the owner.
@@ -129,11 +146,10 @@ contract NFTFarm is Ownable {
 
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 lastBlock = block.number < endBlock ? block.number : endBlock;
-            uint256 nrOfBlocks = lastBlock.sub(pool.lastRewardBlock);
-            uint256 erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accERC20PerShare = accERC20PerShare.add(erc20Reward.mul(1e36).div(lpSupply));
-        }
 
+            uint256 erc20Rewards = computerReward(pool.lastRewardBlock, lastBlock, pool.allocPoint);
+            accERC20PerShare = accERC20PerShare.add(erc20Rewards.mul(1e36).div(lpSupply));
+        }
         return user.amount.mul(accERC20PerShare).div(1e36).sub(user.rewardDebt);
     }
 
@@ -144,7 +160,10 @@ contract NFTFarm is Ownable {
         }
 
         uint256 lastBlock = block.number < endBlock ? block.number : endBlock;
-        return rewardPerBlock.mul(lastBlock - startBlock).sub(paidOut);
+        if (lastBlock <= rainbowDeadline) {
+            return rewardPerBlock.mul(lastBlock - startBlock).mul(rainbowRate).sub(paidOut);
+        }
+        return rewardPerBlock.mul(lastBlock - rainbowDeadline + rainbowBlocks * rainbowRate).sub(paidOut);
     }
 
     // Update reward variables for all pools. Be careful of gas spending!
@@ -169,10 +188,9 @@ contract NFTFarm is Ownable {
             return;
         }
 
-        uint256 nrOfBlocks = lastBlock.sub(pool.lastRewardBlock);
-        uint256 erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
+        uint256 erc20Rewards = computerReward(pool.lastRewardBlock, lastBlock, pool.allocPoint);
 
-        pool.accERC20PerShare = pool.accERC20PerShare.add(erc20Reward.mul(1e36).div(lpSupply));
+        pool.accERC20PerShare = pool.accERC20PerShare.add(erc20Rewards.mul(1e36).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }
 
@@ -194,7 +212,7 @@ contract NFTFarm is Ownable {
     }
 
     // Withdraw LP tokens from Farm.
-    function withdraw(uint256 _pid, uint8 _amount) public {
+    function withdraw(uint256 _pid, uint256 _amount) public {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: can't withdraw more than deposit");
@@ -223,7 +241,25 @@ contract NFTFarm is Ownable {
         paidOut += _amount;
     }
 
-        // required function to allow receiving ERC-1155
+    // Computer Reward from block to block 
+    function computerReward(uint256 _fromBlock, uint256 _toBlock, uint256 _poolPoints) private view returns (uint256) {
+        uint256 erc20Reward;
+        if (_toBlock < rainbowDeadline) {
+            uint256 nrOfBlocks = _toBlock.sub(_fromBlock).mul(rainbowRate);
+            erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
+        } else {
+            uint256 nrOfBlocks;
+            if (rainbowDeadline > _fromBlock) {
+                nrOfBlocks = (rainbowDeadline.sub(_fromBlock)).mul(rainbowRate).add(rainbowDeadline.sub(rainbowDeadline));
+            } else {
+                nrOfBlocks = _toBlock.sub(_fromBlock);
+            }
+            erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
+        }
+        return erc20Reward;
+    }
+
+    // required function to allow receiving ERC-1155
     function onERC1155Received(
         address operator,
         address from,
