@@ -1,6 +1,5 @@
 const NFTFarm = artifacts.require('./NFTFarm.sol');
-const ERC1155 = artifacts.require('./core/ERC1155Mock.sol');
-const ERC20 = artifacts.require('./core/ERC20Mock.sol');
+const ERC20 = artifacts.require('./mock/ERC20Mock.sol');
 const NFT1155 = artifacts.require('./NFTMock.sol');
 const { waitUntilBlock } = require('./helpers/tempo')(web3);
 const NFT1 = 1, NFT1Weight = 10;

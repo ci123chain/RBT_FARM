@@ -3,8 +3,9 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-// mock class using ERC1155
+// mock class using ERC20
 contract NFTMock is ERC1155 {
+
     // Token name
     string private _name;
     // Token symbol
@@ -18,7 +19,7 @@ contract NFTMock is ERC1155 {
         _symbol = symbol_;
     }
 
-    function mint(address to_,uint256 id_, uint256 balance_) public {
+    function mint(address to_,uint256  id_, uint256 balance_) public {
         _mint(to_, id_, balance_, "");
     }
 
