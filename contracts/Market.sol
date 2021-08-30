@@ -10,14 +10,15 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Market is Ownable, ERC1155Receiver {
     using SafeMath for uint256;
+    using SafeMath for uint;
 
     IERC20 public erc20Instance;
     IERC1155 public nftInstance;
 
-    // For market 
     event NewTrade(uint256 _id, address _seller, uint256 _amount, uint256 _price);
     event TradeChanged(uint256 _id, string _status);
 
+    // Info of the trade.
     struct Trade {
         address seller;
         uint256 amount; 
@@ -27,14 +28,13 @@ contract Market is Ownable, ERC1155Receiver {
     }
     Trade[] trades;
 
-    /// @param _erc20Instance The instance of ERC20 that will be use to trade with de ERC1155 token
-    /// @param _nftInstance The instance of ERC1155 that will be use to trade with de ERC20 token
     constructor(IERC20 _erc20Instance, IERC1155 _nftInstance) public ERC1155Receiver(){
         require(address(_nftInstance) != address(0), "exchange to the zero address");
         erc20Instance = _erc20Instance;
         nftInstance = _nftInstance;
     }
 
+    // Create new trade from ERC1155 asset
     function newTrade(uint256 id_, uint256 number, uint256 price_) public {
         require(nftInstance.balanceOf(msg.sender, id_) > number, "no enough tokens to create new trade");
 
@@ -50,6 +50,7 @@ contract Market is Ownable, ERC1155Receiver {
         emit NewTrade(trades.length.sub(1), msg.sender, number, price_);
     }
 
+    // Cancel trade with trade_id
     function cancelTrade(uint256 trade_id_) public {
         Trade storage trade = trades[trade_id_];
         require(msg.sender == trade.seller, "Trade can be open only by seller.");
@@ -59,6 +60,7 @@ contract Market is Ownable, ERC1155Receiver {
         emit TradeChanged(trade_id_, "Cancel");
     }
 
+    // Close trade with trade_id
     function closeTrade(uint256 trade_id_) public onlyOwner {
         Trade storage trade = trades[trade_id_];
         require(
@@ -70,6 +72,7 @@ contract Market is Ownable, ERC1155Receiver {
         emit TradeChanged(trade_id_, "Close");
     }
 
+    // Open trade with trade_id
     function openTrade(uint256 trade_id_) public onlyOwner {
         Trade storage trade = trades[trade_id_];
         require(
@@ -81,6 +84,7 @@ contract Market is Ownable, ERC1155Receiver {
         emit TradeChanged(trade_id_, "Open");
     }
 
+    // Bug a nft
     function bugNFT(uint256 trade_id_) public {
         address buyer = msg.sender;
         Trade storage trade = trades[trade_id_];

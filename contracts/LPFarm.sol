@@ -89,16 +89,16 @@ contract LPFarm is Ownable {
         erc20.safeTransferFrom(address(msg.sender), address(this), _amount);
 
         if (endBlock < rainbowDeadline) {
-            uint256 rainbowLeftBlocks = rainbowDeadline - endBlock;
+            uint256 rainbowLeftBlocks = rainbowDeadline.sub(endBlock);
             uint256 rainbowLeftAward = rainbowLeftBlocks.mul(rewardPerBlock).mul(rainbowRate);
             if (_amount < rainbowLeftAward ) {
-                endBlock += _amount.div(rewardPerBlock).div(rainbowRate);
+                endBlock = _amount.div(rewardPerBlock).div(rainbowRate).add(endBlock);
             } else {
-                uint256 normalAward = _amount - rainbowLeftAward;
-                endBlock += rainbowLeftBlocks + normalAward.div(rewardPerBlock);
+                uint256 normalAward = _amount.sub(rainbowLeftAward);
+                endBlock = rainbowLeftBlocks.add(normalAward.div(rewardPerBlock)).add(endBlock);
             }
         } else {
-            endBlock = endBlock + _amount.div(rewardPerBlock);
+            endBlock = _amount.div(rewardPerBlock).add(endBlock);
         }
     }
 

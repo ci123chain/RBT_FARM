@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Farm distributes the ERC20 rewards based on staked LP to each user.
 //
-// Cloned from https://github.com/SashimiProject/sashimiswap/blob/master/contracts/MasterChef.sol
+// Referenced from https://github.com/SashimiProject/sashimiswap/blob/master/contracts/MasterChef.sol
 // Modified by ERC20 to work for non-mintable ERC20.
 contract NFTFarm is Ownable {
     using SafeMath for uint256;
