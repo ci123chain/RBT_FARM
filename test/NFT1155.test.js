@@ -1,4 +1,4 @@
-const NFT1155 = artifacts.require('./ERC1155/NFT1155.sol');
+const NFT1155 = artifacts.require('./token/NFT1155.sol');
 const Market = artifacts.require('./Market.sol')
 const ERC20 = artifacts.require('./mock/ERC20Mock.sol');
 const { waitUntilBlock } = require('./helpers/tempo')(web3);
@@ -18,7 +18,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
     describe("Test Mint for NFT1", () => {
         before("add token NFT1 ", async() => {
             // 5s
-            await this.n1155.addToken("NFT1", 5000, 20, 5) 
+            await this.n1155.addToken("NFT1", 5000, 20, 5, "123456") 
         });
 
         it('0 balance of alice', async () => {
@@ -37,6 +37,10 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             await this.n1155.mintFor(alice, NFT1);
             assert.equal(balanceAlice, 5000)
         });
+        it("ipfsdata of nft", async ()=> {
+            url = await this.n1155.ipfsData(NFT1);
+            assert.equal(url, "123456")
+        })
         
     });
 
@@ -104,7 +108,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             assert.fail('fund successful');
         });
         it('add NFT2', async () => {
-            await this.n1155.addToken("NFT2", 1000, 20, 10) 
+            await this.n1155.addToken("NFT2", 1000, 20, 10, "67890") 
 
             balanceBob = await this.n1155.balanceOf(bob, NFT2);
             assert.equal(balanceBob, 0)

@@ -1,10 +1,10 @@
 {
   "default": {
     "erc20": {
-      "name": "ERC20 Mock Token",
-      "symbol": "ERC20",
-      "decimals": 10,
-      "supply": "100000000000"
+      "name": "RBT",
+      "symbol": "RBT",
+      "decimals": 0,
+      "supply": "400000000"
     },
     "rewardPerBlock": "10000000",
     "delay": 30,
@@ -12,11 +12,62 @@
     "lp": [
       {
         "name": "ERC20 LP Mock",
-        "symbol": "LP Token",
-        "decimals": 18,
+        "symbol": "LPToken1",
+        "decimals": 0,
         "allocPoint": 120
+      },{
+        "name": "ERC20 LP Mock",
+        "symbol": "LPToken2",
+        "decimals": 0,
+        "allocPoint": 60
       }
-    ]
+    ],
+    "erc1155": [
+      {
+        "index": 1,
+        "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
+        "name": "NFT1",
+        "balance": 5000,
+        "weeklyDecline": 20,
+        "period": 604800,
+        "ipfsUrl": "1234"
+      }, 
+      {
+        "index": 2,
+        "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
+        "name": "NFT2",
+        "balance": 5000,
+        "weeklyDecline": 20,
+        "period": 604800,
+        "ipfsUrl": "5678"
+      }, 
+      {
+        "index": 3,
+        "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
+        "name": "NFT3",
+        "balance": 5000,
+        "weeklyDecline": 20,
+        "period": 604800,
+        "ipfsUrl": "9876"
+      }
+    ],
+    "nftfarm": {
+      "startBlockOffset": 100,
+      "rewardPerBlock": 100,
+      "rewardBlocks": 10000,
+      "list": [
+        {
+          "index": 1,
+          "weight": 10
+        },{
+          "index": 2,
+          "weight": 30
+        },{
+          "index": 3,
+          "weight": 40
+        }
+      ]
+    }
   },
   "kovan": {
     "erc20": {
