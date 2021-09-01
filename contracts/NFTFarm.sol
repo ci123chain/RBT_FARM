@@ -125,15 +125,6 @@ contract NFTFarm is Ownable {
     }
 
 
-    // Update the given pool's ERC20 allocation point. Can only be called by the owner.
-    function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
-        if (_withUpdate) {
-            massUpdatePools();
-        }
-        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
-        poolInfo[_pid].allocPoint = _allocPoint;
-    }
-
     // View function to see deposited LP for a user.
     function deposited(uint256 _pid, address _user) external view returns (uint256) {
         UserInfo storage user = userInfo[_pid][_user];
@@ -226,16 +217,6 @@ contract NFTFarm is Ownable {
         user.rewardDebt = user.amount.mul(pool.accERC20PerShare).div(1e36);
         pool.nftToken.safeTransferFrom(address(this), address(msg.sender), pool.id, _amount, "");
         emit Withdraw(msg.sender, _pid, _amount);
-    }
-
-    // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) public {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        pool.nftToken.safeTransferFrom(address(this), address(msg.sender), pool.id, user.amount, "");
-        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
-        user.amount = 0;
-        user.rewardDebt = 0;
     }
 
     // Transfer ERC20 and update the required ERC20 to payout all rewards

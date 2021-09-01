@@ -18,8 +18,8 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         this.farm = await LPFarm.new(this.erc20.address, 100, 100, this.startBlock);
         this.farm.add(15, this.lp.address, false);
 
-        await this.erc20.approve(this.farm.address, 10000);
-        await this.farm.fund(10000);
+        await this.erc20.approve(this.farm.address, 20000);
+        await this.farm.fund(20000);
     });
 
     before(async () => {
@@ -85,9 +85,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(totalAllocPoint, 15);
         });
 
-        it('holds 10,000 MOCK', async () => {
+        it('holds 20,000 MOCK', async () => {
             const balance = await this.erc20.balanceOf(this.farm.address);
-            assert.equal(balance, 10000)
+            assert.equal(balance, 20000)
         });
 
         it('will run for 100 blocks', async () => {
@@ -135,17 +135,17 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await waitUntilBlock(10, this.startBlock + 10);
         });
 
-        it('has a total reward of 1000 MOCK pending', async () => {
+        it('has a total reward of 2000 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(1000, totalPending);
+            assert.equal(2000, totalPending);
         });
 
-        it('reserved 750 for alice and 250 for bob', async () => {
+        it('reserved 1500 for alice and 500 for bob', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(750, pendingAlice);
+            assert.equal(1500, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(250, pendingBob);
+            assert.equal(500, pendingBob);
         });
     });
 
@@ -157,17 +157,17 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await this.farm.deposit(0, 2000, {from: carl});
         });
 
-        it('has a total reward of 3000 MOCK pending', async () => {
+        it('has a total reward of 6000 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(3000, totalPending);
+            assert.equal(6000, totalPending);
         });
 
-        it('reserved 2250 for alice, 750 for bob, and nothing for carl', async () => {
+        it('reserved 4500 for alice, 1500 for bob, and nothing for carl', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(2250, pendingAlice);
+            assert.equal(4500, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(750, pendingBob);
+            assert.equal(1500, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
             assert.equal(0, pendingCarl);
@@ -179,20 +179,20 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await waitUntilBlock(10, this.startBlock + 50);
         });
 
-        it('has a total reward of 5000 MOCK pending', async () => {
+        it('has a total reward of 10000 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(5000, totalPending);
+            assert.equal(10000, totalPending);
         });
 
-        it('reserved 3000 for alice, 1000 for bob, and 1000 for carl', async () => {
+        it('reserved 6000 for alice, 2000 for bob, and 2000 for carl', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(3000, pendingAlice);
+            assert.equal(6000, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(1000, pendingBob);
+            assert.equal(2000, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(1000, pendingCarl);
+            assert.equal(2000, pendingCarl);
         });
     });
 
@@ -202,9 +202,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await this.farm.withdraw(0, 1500, {from: alice});
         });
 
-        it('gives alice 3750 MOCK and 1500 LP', async () => {
+        it('gives alice 7500 MOCK and 5000 LP', async () => {
             const balanceERC20 = await this.erc20.balanceOf(alice);
-            assert.equal(3750, balanceERC20);
+            assert.equal(7500, balanceERC20);
 
             const balanceLP = await this.lp.balanceOf(alice);
             assert.equal(5000, balanceLP);
@@ -215,20 +215,20 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(0, deposited);
         });
 
-        it('has a total reward of 3250 MOCK pending', async () => {
+        it('has a total reward of 6500 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(3250, totalPending);
+            assert.equal(6500, totalPending);
         });
 
-        it('reserved nothing for alice, 1250 for bob, and 2000 for carl', async () => {
+        it('reserved nothing for alice, 2500 for bob, and 4000 for carl', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
             assert.equal(0, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(1250, pendingBob);
+            assert.equal(2500, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(2000, pendingCarl);
+            assert.equal(4000, pendingCarl);
         });
     });
 
@@ -238,9 +238,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await this.farm.withdraw(0, 1500, {from: carl});
         });
 
-        it('gives carl 2800 MOCK and 1500 LP', async () => {
+        it('gives carl 5600 MOCK and 1500 LP', async () => {
             const balanceERC20 = await this.erc20.balanceOf(carl);
-            assert.equal(2800, balanceERC20);
+            assert.equal(5600, balanceERC20);
 
             const balanceLP = await this.lp.balanceOf(carl);
             assert.equal(1500, balanceLP);
@@ -251,17 +251,17 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(500, deposited);
         });
 
-        it('has a total reward of 1450 MOCK pending', async () => {
+        it('has a total reward of 2900 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(1450, totalPending);
+            assert.equal(2900, totalPending);
         });
 
-        it('reserved nothing for alice, 1450 for bob, and nothing for carl', async () => {
+        it('reserved nothing for alice, 2900 for bob, and nothing for carl', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
             assert.equal(0, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(1450, pendingBob);
+            assert.equal(2900, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
             assert.equal(0, pendingCarl);
@@ -325,9 +325,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         });
         
 
-        it('has a total reward of 3450 MOCK pending', async () => {
+        it('has a total reward of 6900 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(3450, totalPending);
+            assert.equal(6900, totalPending);
         });
 
         it('is initialized for the LP token 2', async () => {
@@ -343,15 +343,15 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         });
 
 
-        it('reserved nothing for alice, 2450 for bob, and 1000 for carl', async () => {
+        it('reserved nothing for alice, 4900 for bob, and 2000 for carl', async () => {
             const pendingAlice = await this.farm.pending(0, alice);
             assert.equal(0, pendingAlice);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(1000, pendingCarl);
+            assert.equal(2000, pendingCarl);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(2450, pendingBob);
+            assert.equal(4900, pendingBob);
 
             
         });
@@ -394,9 +394,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(500, depositCarl);
         });
 
-        it('has a total reward of 4450 MOCK pending', async () => {
+        it('has a total reward of 7900 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(4450, totalPending);
+            assert.equal(7900, totalPending);
         });
 
         it('reserved 75% for LP (50/50 bob/carl)', async () => {
@@ -404,10 +404,10 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(0, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(2825, pendingBob);
+            assert.equal(5275, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(1375, pendingCarl);
+            assert.equal(2375, pendingCarl);
         });
 
         it('reserved 25% for LP2 (not rewarded) -> 250 MOCK inaccessible', async () => {
@@ -444,9 +444,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(500, depositCarl);
         });
 
-        it('has a total reward of 5450 MOCK pending', async () => {
+        it('has a total reward of 8900 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(5450, totalPending);
+            assert.equal(8900, totalPending);
         });
 
         it('reserved 75% for LP with 3200 for bob and 1750 for carl', async () => {
@@ -454,10 +454,10 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(0, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(3200, pendingBob);
+            assert.equal(5650, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(1750, pendingCarl);
+            assert.equal(2750, pendingCarl);
         });
 
         it('reserved 25% for LP2 with 250 for carl', async () => {
@@ -478,9 +478,9 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             await waitUntilBlock(10, this.startBlock + 140);
         });
 
-        it('has a total reward of 7450 MOCK pending', async () => {
+        it('has a total reward of 10900 MOCK pending', async () => {
             const totalPending = await this.farm.totalPending();
-            assert.equal(7450, totalPending);
+            assert.equal(10900, totalPending);
         });
 
         it('reserved 75% for LP with 3950 for bob and 2500 for carl', async () => {
@@ -488,10 +488,10 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             assert.equal(0, pendingAlice);
 
             const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(3950, pendingBob);
+            assert.equal(6400, pendingBob);
 
             const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(2500, pendingCarl);
+            assert.equal(3500, pendingCarl);
         });
 
         it('reserved 25% for LP2 with 333 for alice and 416 for carl', async () => {
@@ -503,248 +503,6 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
 
             const pendingCarl = await this.farm.pending(1, carl);
             assert.equal(416, pendingCarl);
-        });
-    });
-
-    describe('with a participant partially withdrawing LP2 after 150 blocks', () => {
-        before(async () => {
-            await waitUntilBlock(10, this.startBlock + 149);
-            await this.farm.withdraw(1, 200, {from: carl});
-        });
-
-        it('gives carl 500 MOCK and 200 LP', async () => {
-            const balanceERC20 = await this.erc20.balanceOf(carl);
-            assert.equal(3300, balanceERC20);
-
-            const balanceLP = await this.lp2.balanceOf(carl);
-            assert.equal(500, balanceLP);
-        });
-
-        it('has a total reward of 7950 MOCK pending', async () => {
-            const totalPending = await this.farm.totalPending();
-            assert.equal(7950, totalPending);
-        });
-
-        it('reserved 75% for LP with 4325 for bob and 2875 for carl', async () => {
-            const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(4325, pendingBob);
-
-            const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(2875, pendingCarl);
-        });
-
-        it('reserved 25% for LP2 with 500 for alice and nothing for carl', async () => {
-            const pendingAlice = await this.farm.pending(1, alice);
-            assert.equal(500, pendingAlice);
-
-            const pendingCarl = await this.farm.pending(1, carl);
-            assert.equal(0, pendingCarl);
-        });
-
-        it('holds 1000 LP for the participants', async () => {
-            const balanceFarm = await this.lp.balanceOf(this.farm.address);
-            assert.equal(1000, balanceFarm);
-
-            const depositBob = await this.farm.deposited(0, bob);
-            assert.equal(500, depositBob);
-
-            const depositCarl = await this.farm.deposited(0, carl);
-            assert.equal(500, depositCarl);
-        });
-
-        it('holds 1300 LP2 for the participants', async () => {
-            const balanceFarm = await this.lp2.balanceOf(this.farm.address);
-            assert.equal(1300, balanceFarm);
-
-            const depositAlice = await this.farm.deposited(1, alice);
-            assert.equal(1000, depositAlice);
-
-            const depositCarl = await this.farm.deposited(1, carl);
-            assert.equal(300, depositCarl);
-        });
-    });
-
-    describe('with a participant doing an emergency withdraw LP2 after 160 blocks', () => {
-        before(async () => {
-            await waitUntilBlock(10, this.startBlock + 159);
-            await this.farm.emergencyWithdraw(1, {from: carl});
-        });
-
-        it('gives carl 500 LP', async () => {
-            const balanceLP = await this.lp2.balanceOf(carl);
-            assert.equal(800, balanceLP);
-        });
-
-        it('gives carl no MOCK', async () => {
-            const balanceERC20 = await this.erc20.balanceOf(carl);
-            assert.equal(3300, balanceERC20);
-        });
-
-        it('holds no LP2 for carl', async () => {
-            const depositCarl = await this.farm.deposited(1, carl);
-            assert.equal(0, depositCarl);
-        });
-
-        it('has no reward for carl', async () => {
-            const pendingCarl = await this.farm.pending(1, carl);
-            assert.equal(0, pendingCarl);
-        });
-
-        it('holds 1000 LP2 for alice', async () => {
-            const balanceFarm = await this.lp2.balanceOf(this.farm.address);
-            assert.equal(1000, balanceFarm);
-
-            const depositAlice = await this.farm.deposited(1, alice);
-            assert.equal(1000, depositAlice);
-        });
-
-        it('has 750 MOCK pending for alice (receives bobs share)', async () => {
-            const pendingAlice = await this.farm.pending(1, alice);
-            assert.equal(750, pendingAlice);
-        });
-    });
-
-    describe('when closed after 180 blocks', () => {
-        before(async () => {
-            await waitUntilBlock(10, this.startBlock + 180);
-        });
-
-        it('has a total reward of 10950 MOCK pending', async () => {
-            const totalPending = await this.farm.totalPending();
-            assert.equal(10950, totalPending);
-        });
-
-        it('reserved 75% for LP with 4325 for bob and 2875 for carl', async () => {
-            const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(0, pendingAlice);
-
-            const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(5450, pendingBob);
-
-            const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(4000, pendingCarl);
-        });
-
-        it('reserved 25% for LP2 with 1250 for alice', async () => {
-            const pendingAlice = await this.farm.pending(1, alice);
-            assert.equal(1250, pendingAlice);
-
-            const pendingBob = await this.farm.pending(1, bob);
-            assert.equal(0, pendingBob);
-
-            const pendingCarl = await this.farm.pending(1, carl);
-            assert.equal(0, pendingCarl);
-        });
-    });
-
-    describe('when closed for 20 blocks (after 200 blocks)', () => {
-        before(async () => {
-            await waitUntilBlock(10, this.startBlock + 200);
-        });
-
-        it('still has a total reward of 10950 MOCK pending', async () => {
-            const totalPending = await this.farm.totalPending();
-            assert.equal(10950, totalPending);
-        });
-
-        it('has a pending reward for LP 5450 for bob and 4000 for carl', async () => {
-            const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(0, pendingAlice);
-
-            const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(5450, pendingBob);
-
-            const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(4000, pendingCarl);
-        });
-
-        it('has a pending reward for LP2 with 1250 for alice', async () => {
-            const pendingAlice = await this.farm.pending(1, alice);
-            assert.equal(1250, pendingAlice);
-
-            const pendingBob = await this.farm.pending(1, bob);
-            assert.equal(0, pendingBob);
-
-            const pendingCarl = await this.farm.pending(1, carl);
-            assert.equal(0, pendingCarl);
-        });
-
-        it('will not accept new funds', async () => {
-            try {
-                await this.farm.fund(10000);
-            } catch (ex) {
-                // assert.equal(ex.receipt.status, '0x0');
-                return;
-            }
-            assert.fail('fund successful');
-        });
-    });
-
-    describe('with participants withdrawing after closed', async () => {
-        before(async () => {
-            await this.farm.withdraw(1, 1000, {from: alice});
-            await this.farm.withdraw(0, 500, {from: bob});
-            await this.farm.withdraw(0, 500, {from: carl});
-        });
-
-        it('gives alice 1250 MOCK and 1000 LP2', async () => {
-            const balanceERC20 = await this.erc20.balanceOf(alice);
-            assert.equal(5000, balanceERC20);
-
-            const balanceLP = await this.lp.balanceOf(alice);
-            assert.equal(5000, balanceLP);
-
-            const balanceLP2 = await this.lp2.balanceOf(alice);
-            assert.equal(1000, balanceLP2);
-        });
-
-        it('gives carl 5450 MOCK and 500 LP', async () => {
-            const balanceERC20 = await this.erc20.balanceOf(bob);
-            assert.equal(5450, balanceERC20);
-
-            const balanceLP = await this.lp.balanceOf(bob);
-            assert.equal(500, balanceLP);
-        });
-
-        it('gives carl 4000 MOCK and 500 LP', async () => {
-            const balanceERC20 = await this.erc20.balanceOf(carl);
-            assert.equal(7300, balanceERC20);
-
-            const balanceLP = await this.lp.balanceOf(carl);
-            assert.equal(2000, balanceLP);
-
-            const balanceLP2 = await this.lp2.balanceOf(carl);
-            assert.equal(800, balanceLP2);
-        });
-
-        it('has an end balance of 250 MOCK, which is lost forever', async () => {
-            const totalPending = await this.farm.totalPending();
-            assert.equal(250, totalPending);
-
-            const balanceFarm = await this.erc20.balanceOf(this.farm.address);
-            assert.equal(250, balanceFarm);
-        });
-
-        it('has no pending reward for LP', async () => {
-            const pendingAlice = await this.farm.pending(0, alice);
-            assert.equal(0, pendingAlice);
-
-            const pendingBob = await this.farm.pending(0, bob);
-            assert.equal(0, pendingBob);
-
-            const pendingCarl = await this.farm.pending(0, carl);
-            assert.equal(0, pendingCarl);
-        });
-
-        it('has no pending reward for LP2', async () => {
-            const pendingAlice = await this.farm.pending(1, alice);
-            assert.equal(0, pendingAlice);
-
-            const pendingBob = await this.farm.pending(1, bob);
-            assert.equal(0, pendingBob);
-
-            const pendingCarl = await this.farm.pending(1, carl);
-            assert.equal(0, pendingCarl);
         });
     });
 });
