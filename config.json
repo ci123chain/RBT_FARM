@@ -8,7 +8,7 @@
     },
     "rewardPerBlock": "10000000",
     "delay": 30,
-    "fund": "50000000000",
+    "fund": "300000000",
     "lp": [
       {
         "name": "ERC20 LP Mock",
@@ -28,7 +28,8 @@
         "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
         "name": "NFT1",
         "balance": 5000,
-        "weeklyDecline": 20,
+        "weeklyMintAmount": 1500,
+        "weeklyMintDiscount": 90,
         "period": 604800,
         "ipfsUrl": "1234"
       }, 
@@ -37,7 +38,8 @@
         "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
         "name": "NFT2",
         "balance": 5000,
-        "weeklyDecline": 20,
+        "weeklyMintAmount": 500,
+        "weeklyMintDiscount": 90,
         "period": 604800,
         "ipfsUrl": "5678"
       }, 
@@ -46,7 +48,8 @@
         "minter": "0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528",
         "name": "NFT3",
         "balance": 5000,
-        "weeklyDecline": 20,
+        "weeklyMintAmount": 350,
+        "weeklyMintDiscount": 90,
         "period": 604800,
         "ipfsUrl": "9876"
       }

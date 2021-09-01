@@ -1,5 +1,5 @@
 const NFTFarm = artifacts.require("./NFTFarm.sol");
-const ERC20 = artifacts.require("./mock/ERC20Mock.sol");
+const ERC20 = artifacts.require("./token/RBT.sol");
 const NFT1155 = artifacts.require("./token/NFT1155.sol");
 const allConfigs = require("../config.json");
 
@@ -26,11 +26,11 @@ module.exports = function(deployer, network, addresses) {
     deploy = deploy.then(()=>{
       return NFT1155.at(NFT1155.address)
     }).then((nft1155) => {
-      return nft1155.addToken(token.name, token.balance, token.weeklyDecline, token.period, token.ipfsUrl)
+      return nft1155.addToken(token.name, token.balance, token.weeklyMintAmount, token.weeklyMintDiscount, token.period, token.ipfsUrl)
     }).then(()=>{
       return NFT1155.at(NFT1155.address)
     }).then((nft1155) => {
-      return nft1155.mintFor(token.minter, token.index)
+      return nft1155.mintFor(token.index)
     })
   });
 

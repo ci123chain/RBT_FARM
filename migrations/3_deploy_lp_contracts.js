@@ -1,9 +1,6 @@
-const ERC20 = artifacts.require("./mock/ERC20Mock.sol");
+const ERC20 = artifacts.require("./token/RBT.sol");
 const LP = artifacts.require('./mock/LPMock.sol');
 const LPFarm = artifacts.require("./LPFarm.sol");
-const NFTFarm = artifacts.require("./NFTFarm.sol");
-const Market = artifacts.require("./Market.sol");
-const NFT1155 = artifacts.require("./token/NFT1155.sol");
 const allConfigs = require("../config.json");
 
 module.exports = function(deployer, network, addresses) {

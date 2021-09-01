@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -21,15 +21,20 @@ contract NFT1155 is ERC1155, Ownable {
 
     struct NFTInfo {
         string  tokenName;
-        uint256 totalBalance;
-        uint256 nextBalance;
-        uint256 peroidDecline;
-        uint256 peroid;
         uint256 created;
-        uint256 lastMintIndex;
         string  ipfsUrl;
         bool    used;
     }
+
+    struct RewardInfo {
+        uint256 lastWeekIndex;
+        uint256 lastReward;
+        uint256 weeklyMintPercent;
+        uint256 mintInterval;
+        uint256 lastMintDay;
+    }
+
+    mapping(uint256 => RewardInfo) rewardInfos; 
     mapping(uint256 => NFTInfo) tokens;
 
     // event DebugEvent(uint256 _value1, uint256 _value2, uint256 _value3);
@@ -39,37 +44,51 @@ contract NFT1155 is ERC1155, Ownable {
         _symbol = symbol_;
     }
 
-    function addToken(string memory tokenName_, uint256 initialBalance_, uint256 peroidDecline_, uint256 peroid_, string memory ipfsUrl_) public onlyOwner {
-        require(peroidDecline_ > 0 && peroidDecline_ < 100, "decline invalid");
+    function addToken(string memory tokenName_, uint256 initialBalance_, uint256 peroidMint_, uint256 peroidMintPercent_, uint256 peroid_, string memory ipfsUrl_) public onlyOwner {
+        require(peroidMintPercent_ > 0 && peroidMintPercent_ < 100, "decline invalid");
         uint256 currentid = getNextTokenID();
         NFTInfo storage info = tokens[currentid];
         info.tokenName = tokenName_;
-        info.nextBalance = initialBalance_;
-        info.peroidDecline = peroidDecline_;
-        info.peroid = peroid_;
         info.created = now;
         info.ipfsUrl = ipfsUrl_;
         info.used = true;
+
+        RewardInfo storage rinfo = rewardInfos[currentid];
+        rinfo.lastWeekIndex = 0;
+        rinfo.lastReward = peroidMint_;
+        rinfo.weeklyMintPercent = peroidMintPercent_;
+        rinfo.mintInterval = peroid_;
+        rinfo.lastMintDay = 0;
+
         incrementTokenTypeId();
+        _mint(owner(), currentid, initialBalance_.add(peroidMint_), "");
     }
 
-    function mintFor(address to_, uint256 id_) public onlyOwner {
+    function mintFor(uint256 id_) public {
         NFTInfo storage info = tokens[id_];
         require(info.used == true, "token not existed");
-        uint256 intervalSteps = (now - info.created).div(info.peroid) + 1;
-        uint256 balance = info.nextBalance;
-        uint256 totalBalance = info.totalBalance;
 
-        for (uint256 step = info.lastMintIndex; step < intervalSteps; step++) {
-            if (step != 0) {
-                balance = balance.mul(100 - info.peroidDecline).div(100);
-            }
-            _mint(to_, id_, balance, "");
-            totalBalance += balance;
+        RewardInfo storage rinfo = rewardInfos[id_];
+        uint256 intervaldays = (now - info.created).div(rinfo.mintInterval);
+        uint256 totalAmount;
+        for (uint256 date = rinfo.lastMintDay; date < intervaldays; date++) {
+            uint256 amount = computer(id_, date + 1);
+            totalAmount = totalAmount.add(amount);
         }
-        info.nextBalance = balance;
-        info.totalBalance = totalBalance;
-        info.lastMintIndex = intervalSteps;
+        _mint(owner(), id_, totalAmount, "");
+        if (intervaldays != rinfo.lastMintDay) {
+            rinfo.lastMintDay = intervaldays;
+        }
+    }
+
+    function computer(uint256 id_, uint256 date) private returns (uint256) {
+        RewardInfo storage rewardInfo = rewardInfos[id_];
+        uint256 thisWeek = date.div(7);
+        for (uint256 week = rewardInfo.lastWeekIndex; week < thisWeek; week++) {
+            rewardInfo.lastReward = rewardInfo.lastReward.mul(rewardInfo.weeklyMintPercent).div(100);
+        }
+        rewardInfo.lastWeekIndex = thisWeek;
+        return rewardInfo.lastReward;
     }
 
     function ipfsData(uint256 id_) public view returns (string memory) {

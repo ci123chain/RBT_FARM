@@ -60,6 +60,8 @@ contract NFTFarm is Ownable {
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
 
+    // The block number of a year after.
+    uint256 public yearlyBlock;
     // The block number when farming starts.
     uint256 public startBlock;
     // The block number when farming ends.
@@ -76,6 +78,7 @@ contract NFTFarm is Ownable {
         rainbowBlocks = _rainbowBlocks;
         rainbowDeadline = startBlock + _rainbowBlocks;
         endBlock = _startBlock;
+        yearlyBlock = _startBlock.add(7776000);
     }
 
     // Number of LP pools
@@ -243,20 +246,29 @@ contract NFTFarm is Ownable {
 
     // Computer Reward from block to block 
     function computerReward(uint256 _fromBlock, uint256 _toBlock, uint256 _poolPoints) private view returns (uint256) {
-        uint256 erc20Reward;
-        if (_toBlock < rainbowDeadline) {
-            uint256 nrOfBlocks = _toBlock.sub(_fromBlock).mul(rainbowRate);
-            erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
-        } else {
-            uint256 nrOfBlocks;
-            if (rainbowDeadline > _fromBlock) {
-                nrOfBlocks = (rainbowDeadline.sub(_fromBlock)).mul(rainbowRate).add(rainbowDeadline.sub(rainbowDeadline));
-            } else {
-                nrOfBlocks = _toBlock.sub(_fromBlock);
-            }
-            erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
-        }
+        uint256 nrOfBlocks = computerBlocks(_fromBlock, _toBlock);
+        uint256 erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
         return erc20Reward;
+    }
+
+    // Computer actual blocks based rewardPerBlock
+    function computerBlocks(uint256 _fromBlock, uint256 _toBlock) private view returns (uint256) {
+        uint256 nrOfBlocks;
+        if (_toBlock < rainbowDeadline) {
+            nrOfBlocks = _toBlock.sub(_fromBlock).mul(rainbowRate);
+        } else {
+            if (_toBlock < yearlyBlock) {
+                if (rainbowDeadline > _fromBlock) {
+                    nrOfBlocks = (rainbowDeadline.sub(_fromBlock)).mul(rainbowRate).add(_toBlock.sub(rainbowDeadline));
+                } else {
+                    nrOfBlocks = _toBlock.sub(_fromBlock);
+                }
+            } else {
+                // ignore _fromBlock less than rainbowDeadline
+                nrOfBlocks = (_toBlock.sub(yearlyBlock)).div(rainbowRate).add(yearlyBlock - _fromBlock);
+            }
+        }
+        return nrOfBlocks;
     }
 
     // required function to allow receiving ERC-1155

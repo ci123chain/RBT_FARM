@@ -1,4 +1,4 @@
-const ERC20 = artifacts.require("./mock/ERC20Mock.sol");
+const ERC20 = artifacts.require("./token/RBT.sol");
 const Market = artifacts.require("./Market.sol");
 const NFT1155 = artifacts.require("./token/NFT1155.sol");
 

@@ -18,7 +18,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
     describe("Test Mint for NFT1", () => {
         before("add token NFT1 ", async() => {
             // 5s
-            await this.n1155.addToken("NFT1", 5000, 20, 5, "123456") 
+            await this.n1155.addToken("NFT1", 5000, 500, 80, 5, "123456")
         });
 
         it('0 balance of alice', async () => {
@@ -26,16 +26,16 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             assert.equal(balanceAlice, 0)
         });
         it('initial mint', async () => {
-            await this.n1155.mintFor(alice, NFT1);
-            assert.equal(balanceAlice, 0)
+            await this.n1155.mintFor(NFT1);
         });
-        it('5000 balance of alice', async () => {
-            balanceAlice = await this.n1155.balanceOf(alice, NFT1);
-            assert.equal(balanceAlice, 5000)
+        it('5500 balance of Owner', async () => {
+            balanceOwner = await this.n1155.balanceOf(owner, NFT1);
+            assert.equal(balanceOwner, 5500)
         });
-        it('5000 balance of alice for mint again', async () => {
-            await this.n1155.mintFor(alice, NFT1);
-            assert.equal(balanceAlice, 5000)
+        it('5500 balance of alice for mint again', async () => {
+            await this.n1155.mintFor(NFT1);
+            balanceOwner = await this.n1155.balanceOf(owner, NFT1);
+            assert.equal(balanceOwner, 5500)
         });
         it("ipfsdata of nft", async ()=> {
             url = await this.n1155.ipfsData(NFT1);
@@ -56,7 +56,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
 
         it('new trade will failed without approved', async () => {
             try {
-                await this.market.newTrade(NFT1, 500, 1800, {from: alice});
+                await this.market.newTrade(NFT1, 500, 1800, {from: owner});
             } catch(e) {
                 return
             }
@@ -64,13 +64,13 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
         });
 
         it('new trade will success', async () => {
-            await this.n1155.setApprovalForAll(this.market.address, true, {from: alice});
-            await this.market.newTrade(NFT1, 500, 1800, {from: alice});
+            await this.n1155.setApprovalForAll(this.market.address, true, {from: owner});
+            await this.market.newTrade(NFT1, 500, 1800, {from: owner});
         });
 
-        it('4500 balance of alice', async () => {
-            balanceAlice = await this.n1155.balanceOf(alice, NFT1);
-            assert.equal(balanceAlice, 4500)
+        it('5000 balance of alice', async () => {
+            balanceAlice = await this.n1155.balanceOf(owner, NFT1);
+            assert.equal(balanceAlice, 5000)
             balanceC = await this.n1155.balanceOf(this.market.address, NFT1);
             assert.equal(balanceC, 500)
         });
@@ -82,8 +82,8 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
 
             await this.erc20.approve(this.market.address, 1800, {from: bob})
             await this.market.bugNFT(0, {from: bob});
-            balanceAlice = await this.erc20.balanceOf(alice);
-            assert.equal(balanceAlice, 1800)
+            balanceOwner = await this.erc20.balanceOf(owner);
+            assert.equal(balanceOwner, 1800 + 998000)
 
             balanceBob = await this.erc20.balanceOf(bob);
             assert.equal(balanceBob, 200)
@@ -101,29 +101,29 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
         });
         it('NFT not added', async () => {
             try {
-                await this.n1155.mintFor(alice, NFT2);
+                await this.n1155.mintFor(NFT2);
             } catch(e) {
                 return
             }
-            assert.fail('fund successful');
+            assert.fail('mint successful');
         });
         it('add NFT2', async () => {
-            await this.n1155.addToken("NFT2", 1000, 20, 10, "67890") 
+            await this.n1155.addToken("NFT2", 1000, 200, 60, 10, "67890") 
 
-            balanceBob = await this.n1155.balanceOf(bob, NFT2);
-            assert.equal(balanceBob, 0)
+            balanceOwner = await this.n1155.balanceOf(owner, NFT2);
+            assert.equal(balanceOwner, 1200)
         });
-        it('mint NFT2', async () => {
-            await this.n1155.mintFor(carl, NFT2) 
-            balanceCarl = await this.n1155.balanceOf(carl, NFT2);
-            assert.equal(balanceCarl, 1000)
+        it('carl mint NFT2', async () => {
+            await this.n1155.mintFor(NFT2) 
+            balanceCarl = await this.n1155.balanceOf(owner, NFT2);
+            assert.equal(balanceCarl, 1200)
         });
 
         it('transfer 200 NFT2 from carl to alice', async () => {
 
-            await this.n1155.transferFrom(carl, alice, NFT2, 200, {from: carl});
-            balanceCarl = await this.n1155.balanceOf(carl, NFT2);
-            assert.equal(balanceCarl, 800)
+            await this.n1155.transferFrom(owner, alice, NFT2, 200);
+            balanceCarl = await this.n1155.balanceOf(owner, NFT2);
+            assert.equal(balanceCarl, 1000)
 
             balanceAlice = await this.n1155.balanceOf(alice, NFT2);
             assert.equal(balanceAlice, 200)
@@ -131,18 +131,18 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
     });
 
     describe("delay for mint", () => {
-        it('9000 balance of alice for mint again after sleep 6s', async () => {
+        it('5500 balance of alice for mint again after sleep 6s', async () => {
             await sleep(6);
-            await this.n1155.mintFor(alice, NFT1);
-            balanceAlice = await this.n1155.balanceOf(alice, NFT1);
-            assert.equal(balanceAlice, 8500)
+            await this.n1155.mintFor(NFT1);
+            balanceowner = await this.n1155.balanceOf(owner, NFT1);
+            assert.equal(balanceowner, 5500)
         });
 
-        it('14760 balance of alice for mint again after sleep 16s', async () => {
+        it('6500 balance of alice for mint again after sleep 16s', async () => {
             await sleep(11);
-            await this.n1155.mintFor(alice, NFT1);
-            balanceAlice = await this.n1155.balanceOf(alice, NFT1);
-            assert.equal(balanceAlice, 14260)
+            await this.n1155.mintFor(NFT1);
+            balanceowner = await this.n1155.balanceOf(owner, NFT1);
+            assert.equal(balanceowner, 6500)
         });
     });
 });
