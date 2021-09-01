@@ -44,18 +44,33 @@ module.exports = function(deployer, network, addresses) {
         ERC20.address,
         config.nftfarm.rewardPerBlock,
         config.nftfarm.rewardBlocks,
-        blockNumber + config.nftfarm.startBlockOffset,
+        blockNumber + config.nftfarm.delay,
     )
   }).then(() => {
     return NFTFarm.deployed();
-  });
+  })
+
+  var nftfarmInstance
+  if (config.nftfarm.fund) {
+    deploy = deploy
+      .then(() => { return NFTFarm.at(NFTFarm.address); })
+      .then((nftfarm) => {
+        nftfarmInstance = nftfarm
+        return ERC20.at(ERC20.address);
+      })
+      .then((erc20Instance) => {
+        return erc20Instance.approve(nftfarmInstance.address, web3.utils.toBN(config.nftfarm.fund));
+      })
+      .then(() => {
+        return nftfarmInstance.fund(web3.utils.toBN(config.nftfarm.fund));
+      });
+  }
 
   config.nftfarm.list.forEach((item) => {
     deploy = deploy.then(() => {
       return NFTFarm.at(NFTFarm.address)
     }).then((nftfarm)=>{
-      return nftfarm.add(item.weight, NFT1155.address, item.index, false);
+      return nftfarm.add(item.allocPoint, NFT1155.address, item.index, false);
     })
   });
-
 }

@@ -6,22 +6,27 @@
       "decimals": 0,
       "supply": "400000000"
     },
-    "rewardPerBlock": "10000000",
-    "delay": 30,
-    "fund": "300000000",
-    "lp": [
-      {
-        "name": "ERC20 LP Mock",
-        "symbol": "LPToken1",
-        "decimals": 0,
-        "allocPoint": 120
-      },{
-        "name": "ERC20 LP Mock",
-        "symbol": "LPToken2",
-        "decimals": 0,
-        "allocPoint": 60
-      }
-    ],
+    
+    "lpfarm": {
+      "list": [
+        {
+          "name": "ERC20 LP Mock",
+          "symbol": "LPToken1",
+          "decimals": 0,
+          "allocPoint": 120
+        },{
+          "name": "ERC20 LP Mock",
+          "symbol": "LPToken2",
+          "decimals": 0,
+          "allocPoint": 60
+        }
+      ],
+      "fund": "200000000",
+      "rewardPerBlock": "100",
+      "rewardBlocks": 21600,
+      "delay": 30
+    },
+
     "erc1155": [
       {
         "index": 1,
@@ -55,19 +60,20 @@
       }
     ],
     "nftfarm": {
-      "startBlockOffset": 100,
+      "delay": 100,
       "rewardPerBlock": 100,
-      "rewardBlocks": 10000,
+      "rewardBlocks": 21600,
+      "fund": "200000000",
       "list": [
         {
           "index": 1,
-          "weight": 10
+          "allocPoint": 10
         },{
           "index": 2,
-          "weight": 30
+          "allocPoint": 30
         },{
           "index": 3,
-          "weight": 40
+          "allocPoint": 40
         }
       ]
     }

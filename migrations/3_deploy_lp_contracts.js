@@ -11,7 +11,6 @@ module.exports = function(deployer, network, addresses) {
   }
   let deploy = deployer;
 
-  let rainbowBlocks = 100;
 
   deploy = deploy  
     .then(() => {    
@@ -19,32 +18,35 @@ module.exports = function(deployer, network, addresses) {
     })
     .then((currentBlock) => {
       const startBlock = config.startBlock
-          || web3.utils.toBN(currentBlock).add(web3.utils.toBN(config.delay));
+          || web3.utils.toBN(currentBlock).add(web3.utils.toBN(config.lpfarm.delay));
 
       return deployer.deploy(
         LPFarm,
         ERC20.address,
-        web3.utils.toBN(config.rewardPerBlock),
-        rainbowBlocks,
+        web3.utils.toBN(config.lpfarm.rewardPerBlock),
+        config.lpfarm.rewardBlocks,
         startBlock
       );
     });
 
-    if (config.fund) {
+    var lpfarmInstance
+
+    if (config.lpfarm.fund) {
       deploy = deploy
-        .then(() => {
+        .then(() => { return LPFarm.deployed(); })
+        .then((lpfarm) => {
+          lpfarmInstance = lpfarm
           return ERC20.at(ERC20.address);
         })
         .then((erc20Instance) => {
-          return erc20Instance.approve(LPFarm.address, web3.utils.toBN(config.fund));
+          return erc20Instance.approve(lpfarmInstance.address, web3.utils.toBN(config.lpfarm.fund));
         })
-        .then(() => { return LPFarm.deployed(); })
-        .then((farmInstance) => {
-          return farmInstance.fund(web3.utils.toBN(config.fund));
+        .then(() => {
+          return lpfarmInstance.fund(web3.utils.toBN(config.lpfarm.fund));
         });
     }
 
-    config.lp.forEach((token) => {
+    config.lpfarm.list.forEach((token) => {
       if (!token.address) {
         deploy = deploy
           .then(() => {
@@ -70,9 +72,8 @@ module.exports = function(deployer, network, addresses) {
           });
       }
       deploy = deploy
-      .then(() => { return LPFarm.deployed(); })
-      .then((farmInstance) => {
-        return farmInstance.add(
+      .then(() => {
+        return lpfarmInstance.add(
           token.allocPoint,
           token.address || LP.address,
           false
