@@ -116,18 +116,6 @@ contract LockedStaking is Ownable {
         require(RBT.transfer(sinfo.staker, owed), "transfer failed");
     }
 
-    // function withdraw_dev(uint256 _stake_id) public {
-    //     require(!isClosed, "staking is closed");
-    //     StakeInfo storage sinfo = stakes[_stake_id];
-    //     require(sinfo.staker == msg.sender, "not your stake");
-    //     uint256 owed = sinfo.amount.add(sinfo.reward);
-
-    //     // update stats
-    //     totalStaked = totalStaked.sub(sinfo.amount);
-    //     totalRewards = totalRewards.sub(sinfo.reward);
-
-    //     require(RBT.transfer(sinfo.staker, owed), "transfer failed");
-    // }
 
     // close or open the farm
     function close(bool closed) public onlyOwner {

@@ -23,5 +23,7 @@ module.exports = function(deployer, network, addresses) {
           );
         })
         .then(() => {return ERC20.deployed(); });
+    } else {
+      ERC20.address = erc20.address
     }
 }

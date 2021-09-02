@@ -105,19 +105,19 @@ contract('Deploy Unlocking Farm', ([owner, alice, bob, carl]) => {
         
     });
 
-    describe('In dev_mode', () => {
-        it('withdraw', async () => {
-            await this.lockstake.withdraw_dev(1, {from: alice}); 
-        });
+    // describe('In dev_mode', () => {
+    //     it('withdraw', async () => {
+    //         await this.lockstake.withdraw_dev(1, {from: alice}); 
+    //     });
 
-        it('alice should have 55 reward', async () => {
-            aliceBal = await this.erc20.balanceOf(alice); 
-            assert.equal(2055, aliceBal)
+    //     it('alice should have 55 reward', async () => {
+    //         aliceBal = await this.erc20.balanceOf(alice); 
+    //         assert.equal(2055, aliceBal)
 
-            const totalStake = await this.lockstake.totalStaked()
-            assert.equal(0, totalStake);
-        });
-    });
+    //         const totalStake = await this.lockstake.totalStaked()
+    //         assert.equal(0, totalStake);
+    //     });
+    // });
 
 });
 
