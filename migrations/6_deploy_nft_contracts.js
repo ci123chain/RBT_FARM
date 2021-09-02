@@ -14,7 +14,7 @@ module.exports = function(deployer, network, addresses) {
   deploy = deploy.then(()=> {
     return deployer.deploy(
       NFT1155,
-      "NFT1155",
+      "RBT_NFT1155",
       "NFT1155",
       ""
     )

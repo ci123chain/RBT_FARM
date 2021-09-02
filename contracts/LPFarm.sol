@@ -223,14 +223,14 @@ contract LPFarm is Ownable {
         paidOut += _amount;
     }
 
-    // Computer Reward from block to block 
+    // Compute Reward from block to block 
     function computerReward(uint256 _fromBlock, uint256 _toBlock, uint256 _poolPoints) private view returns (uint256) {
         uint256 nrOfBlocks = computerBlocks(_fromBlock, _toBlock);
         uint256 erc20Reward = nrOfBlocks.mul(rewardPerBlock).mul(_poolPoints).div(totalAllocPoint);
         return erc20Reward;
     }
 
-    // Computer actual blocks based rewardPerBlock
+    // Compute actual blocks based rewardPerBlock
     function computerBlocks(uint256 _fromBlock, uint256 _toBlock) private view returns (uint256) {
         uint256 nrOfBlocks;
         if (_toBlock < rainbowDeadline) {
@@ -248,5 +248,18 @@ contract LPFarm is Ownable {
             }
         }
         return nrOfBlocks;
+    }
+
+    function getPoolInfo(uint256 _id) public view returns (address, uint256) {
+        PoolInfo memory pool = poolInfo[_id];
+        return (address(pool.lpToken), pool.allocPoint);
+    }
+
+    // Compute apy of pool
+    function APYPercent(uint256 _id) external view returns (uint256) {
+        PoolInfo storage pool = poolInfo[_id];
+        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
+        uint256 apy = pool.allocPoint.mul(100).mul(rewardPerBlock).mul(7776000).div(lpSupply).div(totalAllocPoint);
+        return apy;
     }
 }

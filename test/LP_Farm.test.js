@@ -16,7 +16,10 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         this.startBlock = currentBlock + 100;
 
         this.farm = await LPFarm.new(this.erc20.address, 100, 100, this.startBlock);
-        this.farm.add(15, this.lp.address, false);
+        await this.farm.add(15, this.lp.address, false);
+
+        const poolinfo = await this.farm.getPoolInfo(0)
+        assert.equal(this.lp.address, poolinfo['0'])
 
         await this.erc20.approve(this.farm.address, 20000);
         await this.farm.fund(20000);
@@ -127,6 +130,13 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         it('does not assign any rewards yet', async () => {
             const totalPending = await this.farm.totalPending();
             assert.equal(0, totalPending);
+        });
+    })
+
+    describe("computer apy test", () => {
+        it('apy of pool1', async () => {
+            const apy = await this.farm.APYPercent(0);
+            assert.equal(38880000, apy);
         });
     })
 
