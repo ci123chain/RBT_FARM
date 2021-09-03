@@ -19,6 +19,19 @@ module.exports = {
             gas: 4500000,
             gasPrice: 10000000000,
         },
+        okextest: {
+            provider: function() { 
+                return new HDWalletProvider(
+                    process.env.MNEMONIC,
+                    'https://exchaintestrpc.okex.org'
+                );
+            },
+            network_id: 65,
+            gas: 4500000,
+            gasPrice: 10000000000,
+            networkCheckTimeout: 1000000,
+            timeoutBlocks: 200,
+        },
         test: {
             host: "localhost",
             port: 8545,
