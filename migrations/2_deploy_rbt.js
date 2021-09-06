@@ -1,5 +1,6 @@
 const ERC20 = artifacts.require("./token/RBT.sol");
 const allConfigs = require("../config.json");
+const fs = require('fs')
 
 module.exports = function(deployer, network, addresses) {
     const config = allConfigs[network.replace(/-fork$/, '')] || allConfigs.default;
@@ -26,4 +27,8 @@ module.exports = function(deployer, network, addresses) {
     } else {
       ERC20.address = erc20.address
     }
+
+    // var OutPut = require("../output.json");    
+    // OutPut.ERC20 = ERC20.address;
+    // fs.writeFileSync('../output.json', JSON.stringify(OutPut));
 }

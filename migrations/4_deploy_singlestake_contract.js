@@ -82,8 +82,8 @@ module.exports = function(deployer, network, addresses) {
     });
 
     
-
-
-
+    // var OutPut = require("../output.json");
+    // OutPut.SingleStakeFarm = singlefarmInstance.address;
+    // fs.writeFileSync('../output.json', JSON.stringify(OutPut));
 };
 

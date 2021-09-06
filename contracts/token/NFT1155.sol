@@ -19,8 +19,11 @@ contract NFT1155 is ERC1155, Ownable {
 
     uint256 private _created;
 
+    IERC20 usdtAddr;
+
     struct NFTInfo {
         string  tokenName;
+        uint256 price;
         uint256 created;
         string  ipfsUrl;
         bool    used;
@@ -37,20 +40,22 @@ contract NFT1155 is ERC1155, Ownable {
     mapping(uint256 => RewardInfo) rewardInfos; 
     mapping(uint256 => NFTInfo) tokens;
 
-    // event DebugEvent(uint256 _value1, uint256 _value2, uint256 _value3);
+    event NFTSelled(uint256 _id, address _buyer, uint256 _amount);
 
-    constructor(string memory name_, string memory symbol_, string memory baseUri_) ERC1155(baseUri_) public {
+    constructor(string memory name_, string memory symbol_, address usdtaddr_, string memory baseUri_) ERC1155(baseUri_) public {
         _name = name_;
         _symbol = symbol_;
+        usdtAddr = IERC20(usdtaddr_);
     }
 
-    function addToken(string memory tokenName_, uint256 initialBalance_, uint256 peroidMint_, uint256 peroidMintPercent_, uint256 peroid_, string memory ipfsUrl_) public onlyOwner {
+    function addToken(string memory tokenName_, uint256 initialBalance_, uint256 peroidMint_, uint256 peroidMintPercent_, uint256 peroid_, string memory ipfsUrl_, uint256 price_) public onlyOwner {
         require(peroidMintPercent_ > 0 && peroidMintPercent_ < 100, "decline invalid");
         uint256 currentid = getNextTokenID();
         NFTInfo storage info = tokens[currentid];
         info.tokenName = tokenName_;
         info.created = now;
         info.ipfsUrl = ipfsUrl_;
+        info.price = price_;
         info.used = true;
 
         RewardInfo storage rinfo = rewardInfos[currentid];
@@ -79,6 +84,20 @@ contract NFT1155 is ERC1155, Ownable {
         if (intervaldays != rinfo.lastMintDay) {
             rinfo.lastMintDay = intervaldays;
         }
+    }
+
+    function buyone(uint256 id_) public {
+        address buyer = msg.sender;
+        NFTInfo storage info = tokens[id_];
+        require(info.used == true, "token not existed");
+
+        require(balanceOf(owner(), id_) > 0, "not enough to sell");
+        require(usdtAddr.balanceOf(buyer) > info.price, "not enough to buy");
+
+        usdtAddr.transferFrom(buyer, owner(), info.price);
+        safeTransferFrom(address(this), buyer, id_, 1, '0x');
+
+        emit NFTSelled(id_, buyer, 1);
     }
 
     function computer(uint256 id_, uint256 date) private returns (uint256) {

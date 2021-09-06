@@ -11,6 +11,7 @@ module.exports = function(deployer, network, addresses) {
   }
   let deploy = deployer;
 
+  var lpfarmInstance
 
   deploy = deploy  
     .then(() => {    
@@ -29,7 +30,7 @@ module.exports = function(deployer, network, addresses) {
       );
     });
 
-    var lpfarmInstance
+    
 
     if (config.lpfarm.fund) {
       deploy = deploy
@@ -81,9 +82,8 @@ module.exports = function(deployer, network, addresses) {
       });
     });
 
-    
-
-
-
+    // var OutPut = require("../output.json");
+    // OutPut.LPFarm = lpfarmInstance.address;
+    // fs.writeFileSync('../output.json', JSON.stringify(OutPut));
 };
 

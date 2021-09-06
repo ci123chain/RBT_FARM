@@ -10,7 +10,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
         this.erc20 = await ERC20.new("Mock token", "MOCK", 0, 1000000);
         let balance = await this.erc20.balanceOf(owner);
         assert.equal(balance.valueOf(), 1000000);
-        this.n1155 = await NFT1155.new("NFT1155", "NFTs", "");
+        this.n1155 = await NFT1155.new("NFT1155", "NFTs", this.erc20.address, "");
         this.market = await Market.new(this.erc20.address, this.n1155.address);
     });
 
@@ -18,7 +18,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
     describe("Test Mint for NFT1", () => {
         before("add token NFT1 ", async() => {
             // 5s
-            await this.n1155.addToken("NFT1", 10000, 1500, 90, 5, "123456") // 10s mint 1500, 90% discount per week
+            await this.n1155.addToken("NFT1", 10000, 1500, 90, 5, "123456", web3.utils.toBN("19900")) // 10s mint 1500, 90% discount per week
         });
 
         it('0 balance of alice', async () => {

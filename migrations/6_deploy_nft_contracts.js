@@ -16,6 +16,7 @@ module.exports = function(deployer, network, addresses) {
       NFT1155,
       "RBT_NFT1155",
       "NFT1155",
+      ERC20.address,
       ""
     )
   }).then(() => {
@@ -26,7 +27,7 @@ module.exports = function(deployer, network, addresses) {
     deploy = deploy.then(()=>{
       return NFT1155.at(NFT1155.address)
     }).then((nft1155) => {
-      return nft1155.addToken(token.name, token.balance, token.weeklyMintAmount, token.weeklyMintDiscount, token.period, token.ipfsUrl)
+      return nft1155.addToken(token.name, token.balance, token.weeklyMintAmount, token.weeklyMintDiscount, token.period, token.ipfsUrl, web3.utils.toBN(token.price))
     }).then(()=>{
       return NFT1155.at(NFT1155.address)
     }).then((nft1155) => {
@@ -73,4 +74,11 @@ module.exports = function(deployer, network, addresses) {
       return nftfarm.add(item.allocPoint, NFT1155.address, item.index, false);
     })
   });
+
+
+
+  // var OutPut = require("../output.json");
+  // OutPut.NFT1155 = NFT1155.address;
+  // OutPut.NFTFarm = nftfarmInstance.address;  
+  // fs.writeFileSync('../output.json', JSON.stringify(OutPut));
 }
