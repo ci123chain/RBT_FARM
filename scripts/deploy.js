@@ -140,6 +140,8 @@ async function deployNFTFarm() {
 
 async function deployMarket() {
     marketIns = await Market.new(RBTTokenAddr, NFT1155Addr)
+    await nft1155Ins.setApprovalForAll(marketIns.address, true);
+    
     MarketAddr = marketIns.address
 }
 
