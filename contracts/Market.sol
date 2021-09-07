@@ -47,7 +47,7 @@ contract Market is Ownable, ERC1155Receiver {
         nftInstance = _nftInstance;
     }
 
-    function buyOneNFT(uint256 id_) public {
+    function mintOneNFT(uint256 id_) public {
         address buyer = msg.sender;
         uint256 price;
         (, price, ) = nftInstance.poolInfo(id_);

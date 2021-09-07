@@ -97,7 +97,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             await this.erc20.transfer(alice, 9900, {from: owner})
             balanceAlice = await this.erc20.balanceOf(alice);
             await this.erc20.approve(this.market.address, 9900, {from: alice})
-            await this.market.buyOneNFT(NFT1, {from: alice})
+            await this.market.mintOneNFT(NFT1, {from: alice})
             balanceAliceNFT1_2 = await this.n1155.balanceOf(alice, NFT1)
             assert.equal(balanceAliceNFT1_2 - balanceAliceNFT1, 1)
         })
