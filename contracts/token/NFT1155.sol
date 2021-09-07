@@ -110,6 +110,16 @@ contract NFT1155 is ERC1155, Ownable {
         return rewardInfo.lastReward;
     }
 
+    function getOwner()public view returns (address) {
+        return owner();
+    }
+
+    function poolInfo(uint256 tokenid_) public view returns (string memory, uint256, string memory) {
+        NFTInfo storage info = tokens[tokenid_];
+        require(info.used == true, "token not existed");
+        return (info.tokenName, info.price, info.ipfsUrl);
+    }
+
     function ipfsData(uint256 id_) public view returns (string memory) {
         NFTInfo storage info = tokens[id_];
         require(info.used == true, "token not existed");

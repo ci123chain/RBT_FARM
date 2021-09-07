@@ -7,8 +7,8 @@
   },
   "scripts": {
     "test": "scripts/test.sh",
-    "script:deploy": "truffle exec ./scripts/deploy.js --network development",
-    "script:deploy-okex": "truffle exec ./scripts/deploy.js --network okextest",
+    "script:deploy": "truffle compile && truffle exec ./scripts/deploy.js --network development",
+    "script:deploy-okex": "truffle compile && truffle exec ./scripts/deploy.js --network okextest",
 
     "dev": "truffle migrate --network kovan --reset",
     "devverify": "truffle run verify Farm --network kovan",

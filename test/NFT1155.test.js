@@ -81,7 +81,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             assert.equal(balanceBob, 2000)
 
             await this.erc20.approve(this.market.address, 1800, {from: bob})
-            await this.market.bugNFT(0, {from: bob});
+            await this.market.bugTrade(0, {from: bob});
             balanceOwner = await this.erc20.balanceOf(owner);
             assert.equal(balanceOwner, 1800 + 998000)
 
@@ -91,6 +91,16 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             balanceBobN = await this.n1155.balanceOf(bob, NFT1);
             assert.equal(balanceBobN, 500)
         });
+
+        it('buy a nft', async ()=> {
+            balanceAliceNFT1 = await this.n1155.balanceOf(alice, NFT1)
+            await this.erc20.transfer(alice, 9900, {from: owner})
+            balanceAlice = await this.erc20.balanceOf(alice);
+            await this.erc20.approve(this.market.address, 9900, {from: alice})
+            await this.market.buyOneNFT(NFT1, {from: alice})
+            balanceAliceNFT1_2 = await this.n1155.balanceOf(alice, NFT1)
+            assert.equal(balanceAliceNFT1_2 - balanceAliceNFT1, 1)
+        })
     });
 
 
@@ -130,21 +140,21 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
         });
     });
 
-    describe("delay for mint", () => {
-        it('5500 balance of alice for mint again after sleep 6s', async () => {
-            await sleep(6);
-            await this.n1155.mintFor(NFT1);
-            balanceowner = await this.n1155.balanceOf(owner, NFT1);
-            assert.equal(balanceowner, 5500)
-        });
+    // describe("delay for mint", () => {
+    //     it('5500 balance of alice for mint again after sleep 6s', async () => {
+    //         await sleep(6);
+    //         await this.n1155.mintFor(NFT1);
+    //         balanceowner = await this.n1155.balanceOf(owner, NFT1);
+    //         assert.equal(balanceowner, 5500)
+    //     });
 
-        it('6500 balance of alice for mint again after sleep 16s', async () => {
-            await sleep(11);
-            await this.n1155.mintFor(NFT1);
-            balanceowner = await this.n1155.balanceOf(owner, NFT1);
-            assert.equal(balanceowner, 6500)
-        });
-    });
+    //     it('6500 balance of alice for mint again after sleep 16s', async () => {
+    //         await sleep(11);
+    //         await this.n1155.mintFor(NFT1);
+    //         balanceowner = await this.n1155.balanceOf(owner, NFT1);
+    //         assert.equal(balanceowner, 6500)
+    //     });
+    // });
 });
 
 function sleep (time) {
