@@ -82,7 +82,7 @@
         "weeklyMintAmount": 1500,
         "weeklyMintDiscount": 90,
         "period": 604800,
-        "price": "99000000",
+        "price": "9900",
         "ipfsUrl": "1234"
       }, 
       {
@@ -92,7 +92,7 @@
         "weeklyMintAmount": 750,
         "weeklyMintDiscount": 90,
         "period": 604800,
-        "price": "199000000",
+        "price": "19900",
         "ipfsUrl": "5678"
       }, 
       {
@@ -102,7 +102,7 @@
         "weeklyMintAmount": 300,
         "weeklyMintDiscount": 90,
         "period": 604800,
-        "price": "599000000",
+        "price": "59900",
         "ipfsUrl": "9876"
       }
     ],

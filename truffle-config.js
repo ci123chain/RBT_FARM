@@ -4,9 +4,15 @@ require('dotenv').config();
 module.exports = {
     networks: {
         development: {
-            host: "localhost",
-            port: 8545,
-            network_id: "*"
+            provider: function() { 
+                return new HDWalletProvider(
+                       process.env.MNEMONIC,
+                       `http://localhost:8545`
+                   );
+               },
+            // host: "localhost",
+            // port: 8545,
+            network_id: "1631066815323"
         },
         rinkeby: {
             provider: function() { 
@@ -30,7 +36,7 @@ module.exports = {
             gas: 4500000,
             gasPrice: 10000000000,
             networkCheckTimeout: 1000000,
-            timeoutBlocks: 200,
+            timeoutBlocks: 2000,
         },
         test: {
             host: "localhost",

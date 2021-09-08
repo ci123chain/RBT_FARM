@@ -1,4 +1,5 @@
 const Web3 = require('web3');
+const fs = require('fs')
 //const web3 = new Web3('https://data-seed-prebsc-2-s1.binance.org:8545'); /// [Note]: Endpoing is the BSC testnet (original)
 //const provider = new Web3.providers.HttpProvider('https://data-seed-prebsc-2-s1.binance.org:8545');  /// [Note]: 503 Error
 // const provider = new Web3.providers.HttpProvider('https://localhost:8545');    /// [Note]: New RPC Endpoint
@@ -15,6 +16,8 @@ const Market = artifacts.require("./Market.sol");
 
 const allConfigs = require("../config.json");
 const config = allConfigs.default;
+
+
 
 let currentAddr;
 
@@ -95,6 +98,10 @@ async function singleStakeFarm() {
 }
 
 async function lockedStakeFarm() {
+    if (!SingleStakingFarmAddr || !RBTTokenAddr) {
+        console.log("unlockedAddr or RBTTokenAddr should not be empty");
+        return
+    }
     lockedStakeFarmIns = await LockedStaking.new(RBTTokenAddr, SingleStakingFarmAddr)
     LockedStakeFarmAddr = lockedStakeFarmIns.address
     await rbtTokenIns.approve(LockedStakeFarmAddr, web3.utils.toBN(config.lockstakefarm.fund));
@@ -170,6 +177,24 @@ module.exports = function(callback) {
 
 async function main() {
 
+    let { unlockAddress, rbt } = require('yargs')
+    .option('unlock', { alias: 'unlockAddress', describe: 'unlockstaking string', type: 'string' })
+    .option('rbt', { alias: 'rbtAddress', describe: 'rbt address string', type: 'string' })
+    .parse()
+
+    if (unlockAddress && unlockAddress.length > 0) {
+        SingleStakingFarmAddr = unlockAddress
+        RBTTokenAddr = rbt
+        rbtTokenIns = await RBT.at(RBTTokenAddr)
+        console.log("\n------------- Deploying LockedStaking start-------------");
+        console.log("Unlock Address:", SingleStakingFarmAddr);
+        console.log("RBT Address:", RBTTokenAddr);
+        
+        await lockedStakeFarm();
+        console.log("LockedStaking: ", LockedStakeFarmAddr);
+        return
+    }
+    
     console.log("\n------------- Check state in advance -------------");
     await checkStateInAdvance();
 
@@ -185,9 +210,7 @@ async function main() {
     await singleStakeFarm();
     console.log("SingleStaking: ", SingleStakingFarmAddr);
 
-    console.log("\n------------- Deploying LockedStaking start-------------");
-    await lockedStakeFarm();
-    console.log("LockedStaking: ", LockedStakeFarmAddr);
+    
  
     console.log("\n------------- Deploying NFT1155 start-------------");
     await deployNFT();
@@ -200,4 +223,21 @@ async function main() {
     console.log("\n------------- Deploying Market start-------------");
     await deployMarket();
     console.log("Market: ", MarketAddr);
+
+    const output = {
+        "RBT": RBTTokenAddr,
+        "LPFarm": LPFarmAddr,
+        "SingleStakingFarm": SingleStakingFarmAddr,
+        // "LockedStakingFarm": LockedStakeFarmAddr,
+        "NFT1155": NFT1155Addr,
+        "NFTFarm": NFTFarmAddr,
+        "Market": MarketAddr
+    }
+
+
+    try {
+        fs.writeFileSync('./output.json', JSON.stringify(output))
+    } catch (err) {
+        console.error(err)
+    }
 }

@@ -65,6 +65,8 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
 
         it('new trade will success', async () => {
             await this.n1155.setApprovalForAll(this.market.address, true, {from: owner});
+            isApprove = await this.n1155.isApprovedForAll(owner, this.market.address)
+            assert.equal(isApprove, true)
             await this.market.newTrade(NFT1, 500, 1800, {from: owner});
         });
 

@@ -7,7 +7,9 @@
   },
   "scripts": {
     "test": "scripts/test.sh",
-    "script:deploy": "truffle compile && truffle exec ./scripts/deploy.js --network development",
+    "script:deploy-nolock": "truffle compile && truffle exec ./scripts/deploy.js --network development",
+    "script:deploy-lock": "truffle compile && truffle exec ./scripts/deploy.js --network development --unlockAddress 0x37B94b2c5939b35bBF39e0C3507Bd32198bE05b7 --rbt 0x923C2593f2A404546D093e7f70E1Ac17dFa7990b",
+
     "script:deploy-okex": "truffle compile && truffle exec ./scripts/deploy.js --network okextest",
 
     "dev": "truffle migrate --network kovan --reset",
