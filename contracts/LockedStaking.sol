@@ -34,6 +34,7 @@ contract LockedStaking is Ownable {
 
 
     struct StakeInfo {
+        uint256 stakeID;
         uint256 poolID;
         uint256 amount;
         uint256 reward;
@@ -92,6 +93,7 @@ contract LockedStaking is Ownable {
         require(RBT.transferFrom(msg.sender, address(this), _amount), "transfer failed");
 
         uint256 nextstakeID = getNextStakeID();
+        stakes[nextstakeID].stakeID = nextstakeID;
         stakes[nextstakeID].poolID = _id;
         stakes[nextstakeID].amount = _amount;
         stakes[nextstakeID].reward = _reward;
