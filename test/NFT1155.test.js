@@ -56,6 +56,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
 
         it('new trade will failed without approved', async () => {
             try {
+                await this.n1155.setApprovalForAll(this.market.address, false, {from: owner});
                 await this.market.newTrade(NFT1, 500, 1800, {from: owner});
             } catch(e) {
                 return
@@ -83,7 +84,7 @@ contract('NFT1155', ([owner, alice, bob, carl]) => {
             assert.equal(balanceBob, 2000)
 
             await this.erc20.approve(this.market.address, 1800, {from: bob})
-            await this.market.bugTrade(0, {from: bob});
+            await this.market.buyTrade(0, {from: bob});
             balanceOwner = await this.erc20.balanceOf(owner);
             assert.equal(balanceOwner, 1800 + 998000)
 

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -31,6 +32,7 @@ contract LockedStaking is Ownable {
     // Info of each pool.
     PoolInfo[] public poolInfos;
 
+
     struct StakeInfo {
         uint256 poolID;
         uint256 amount;
@@ -38,8 +40,8 @@ contract LockedStaking is Ownable {
         uint256 startTime;
         address staker;
     }
-    mapping (uint256=> StakeInfo) public stakes;
-    // mapping (address=>uint256[]) userStakes;
+    mapping (uint256=> StakeInfo) stakes;
+    mapping (address => uint256[]) userStakes;
 
     constructor(address _RBT, address _unlockStaking) public {
         require(_RBT != address(0), "RBT address cannot be empty");
@@ -96,6 +98,7 @@ contract LockedStaking is Ownable {
         stakes[nextstakeID].startTime = now;
         stakes[nextstakeID].staker = msg.sender;
 
+        userStakes[msg.sender].push(nextstakeID);
         // update stats
         totalStaked = totalStaked.add(_amount);
         totalRewards = totalRewards.add(_reward);
@@ -131,10 +134,22 @@ contract LockedStaking is Ownable {
         return pinfo.lockDays.mul(1 days).add(sinfo.startTime);
     }
 
-    function getStake(uint256 _stake_id) public view returns (uint256, uint256, uint256) {
+    function getStake(uint256 _stake_id) public view returns (StakeInfo memory) {
         StakeInfo memory sinfo = stakes[_stake_id];
         require(sinfo.startTime > 0, "stake id not exist");
-        return (sinfo.startTime, sinfo.amount, sinfo.reward);
+        return sinfo;
+    }
+
+
+    function getStakes() public view returns (StakeInfo[] memory) {
+        uint256[] storage stakeids = userStakes[msg.sender];
+        StakeInfo[] memory sinfos = new StakeInfo[](stakeids.length);
+
+        for (uint256 i = 0; i < stakeids.length; i++) {
+            StakeInfo memory si = stakes[stakeids[i]];
+            sinfos[i] = si;
+        }
+        return sinfos;
     }
 
     // calculate reward of poolid with amount
@@ -166,5 +181,15 @@ contract LockedStaking is Ownable {
     function apyOfUnLockStaking(uint256 _id) internal view returns (uint256) {
         uint256 actureApy = unlockStake.APYPercent(_id);
         return actureApy;
+    }
+
+    // Compute apy of pool
+    function APYPercent(uint256 _id) public view returns (uint256) {
+        require(_id >= 0, "less than minimum staking type");
+        require(_id < poolInfos.length, "more than maximum staking type");
+        PoolInfo memory pinfo = poolInfos[_id];
+        uint256 apyUnlock = apyOfUnLockStaking(_id);
+        uint256 apy = pinfo.apyRate.mul(apyUnlock).div(100);
+        return apy;
     }
 }

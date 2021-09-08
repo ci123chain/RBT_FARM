@@ -12,9 +12,6 @@ contract('Farm', ([owner, alice, bob, carl]) => {
         let balance = await this.erc20.balanceOf(owner);
         assert.equal(balance.valueOf(), 1000000);
 
-        // this.nft = await NFT.new(10000);
-        // this.nft2 = await NFT.new(10000);
-
         this.n1155 = await NFT1155.new("NFT1155", "NFTs", "")
 
         this.n1155.mint(owner, NFT1, 10000)

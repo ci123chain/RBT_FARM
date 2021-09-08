@@ -232,6 +232,14 @@ contract NFTFarm is Ownable {
         return erc20Reward;
     }
 
+    // Compute apy of pool
+    function APYPercent(uint256 _id) external view returns (uint256) {
+        PoolInfo storage pool = poolInfo[_id];
+        uint256 lpSupply = pool.nftToken.balanceOf(address(this), pool.id);
+        uint256 apy = pool.allocPoint.mul(100).mul(rewardPerBlock).mul(7776000).div(lpSupply).div(totalAllocPoint);
+        return apy;
+    }
+
     // Computer actual blocks based rewardPerBlock
     function computerBlocks(uint256 _fromBlock, uint256 _toBlock) private view returns (uint256) {
         uint256 nrOfBlocks;

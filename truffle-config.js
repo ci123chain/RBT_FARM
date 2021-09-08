@@ -4,15 +4,17 @@ require('dotenv').config();
 module.exports = {
     networks: {
         development: {
-            provider: function() { 
-                return new HDWalletProvider(
-                       process.env.MNEMONIC,
-                       `http://localhost:8545`
-                   );
-               },
-            // host: "localhost",
-            // port: 8545,
-            network_id: "1631066815323"
+            // provider: function() { 
+            //     return new HDWalletProvider(
+            //            process.env.MNEMONIC,
+            //            `http://localhost:8545`
+            //        );
+            //    },
+            // network_id: "1631066815323"
+            host: "localhost",
+            port: 8545,
+            network_id: "*"
+            
         },
         rinkeby: {
             provider: function() { 

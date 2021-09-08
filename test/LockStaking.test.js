@@ -64,10 +64,11 @@ contract('Deploy Unlocking Farm', ([owner, alice, bob, carl]) => {
             assert.equal(3, pendingBob);
         });
 
-        it('get apy of pool 0', async () => {
+        it('get unlock apy of pool 0', async () => {
             const apy0 = await this.farm.APYPercent(0);
             assert.equal(145, apy0);
         });
+
     });
 
     describe('Deploy LockStaking', () => {
@@ -80,18 +81,27 @@ contract('Deploy Unlocking Farm', ([owner, alice, bob, carl]) => {
             await this.lockstake.add(15, 130);
             await this.lockstake.add(30, 150);
         });
+        it('get lock apy of pool 0', async () => {
+            const apy0 = await this.lockstake.APYPercent(0);
+            assert.equal(166, apy0);
+        });
         it('stake 2000 to pool 0', async () => {
             await this.erc20.approve(this.lockstake.address, 2000, {from: alice});
             await this.lockstake.stake(0, 2000, {from: alice}); 
 
             const stake = await this.lockstake.getStake(1);
             const stakeendtime = await this.lockstake.endTimeOfStakeID(1);
-            assert.equal(7 * 60 * 60 * 24, stakeendtime - stake['0']);
-            assert.equal(2000, stake["1"]);
-            assert.equal(55, stake["2"]);
+            assert.equal(7 * 60 * 60 * 24, stakeendtime - stake.startTime);
+            assert.equal(2000, stake.amount);
+            assert.equal(55, stake.reward);
 
             const totalStake = await this.lockstake.totalStaked()
             assert.equal(2000, totalStake);
+        });
+
+        it('get stakes', async () => {
+            const stakes = await this.lockstake.getStakes({from: alice});
+            assert.equal(1, stakes.length);
         });
         it('withdraw with stakeid 1', async () => {
             try {

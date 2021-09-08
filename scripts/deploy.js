@@ -39,12 +39,18 @@ let marketIns;
 
 
 async function deployRBT() {
-    erc20config = config.erc20;
-    rbtTokenIns = await RBT.new(erc20config.name,
-        erc20config.symbol,
-        erc20config.decimals,
-        web3.utils.toBN(erc20config.supply));
-    RBTTokenAddr = rbtTokenIns.address
+    erc20config = config.rbt;
+    if (erc20config.address && erc20config.address.length > 0) {
+        console.log("use exist rbt", erc20config.address)
+        RBTTokenAddr = erc20config.address
+        rbtTokenIns = await RBT.at(RBTTokenAddr)
+    } else {
+        rbtTokenIns = await RBT.new(erc20config.name,
+            erc20config.symbol,
+            erc20config.decimals,
+            web3.utils.toBN(erc20config.supply));
+        RBTTokenAddr = rbtTokenIns.address
+    }
 }
 
 async function deployLPFarm() {
@@ -104,7 +110,13 @@ async function lockedStakeFarm() {
     }
     lockedStakeFarmIns = await LockedStaking.new(RBTTokenAddr, SingleStakingFarmAddr)
     LockedStakeFarmAddr = lockedStakeFarmIns.address
-    await rbtTokenIns.approve(LockedStakeFarmAddr, web3.utils.toBN(config.lockstakefarm.fund));
+
+    if (config.lockstakefarm.fund) {
+        console.log("Fund to LockedStakeFarm ", config.lockstakefarm.fund)
+
+        await rbtTokenIns.approve(LockedStakeFarmAddr, web3.utils.toBN(config.lockstakefarm.fund));
+        await lockedStakeFarmIns.fund(web3.utils.toBN(config.lockstakefarm.fund));
+    }
 
     for (index in config.lockstakefarm.list) {
         const pool = config.lockstakefarm.list[index]

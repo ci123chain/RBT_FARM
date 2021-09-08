@@ -110,8 +110,8 @@ contract Market is Ownable, ERC1155Receiver {
         emit TradeChanged(trade_id_, Open);
     }
 
-    // Bug a trade
-    function bugTrade(uint256 trade_id_) public {
+    // Buy a trade
+    function buyTrade(uint256 trade_id_) public {
         address buyer = msg.sender;
         Trade storage trade = trades[trade_id_];
         require(trade.seller != buyer, "seller is buyer");

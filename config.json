@@ -1,12 +1,11 @@
 {
   "default": {
-    "erc20": {
+    "rbt": {
       "name": "RBT",
       "symbol": "RBT",
       "decimals": 0,
       "supply": "400000000"
     },
-    
     "lpfarm": {
       "list": [
         {
@@ -126,38 +125,26 @@
     }
   },
   "okextest": {
-    "erc20": {
-      "name": "RBT",
-      "symbol": "RBT",
-      "decimals": 0,
-      "supply": "400000000"
+    "rbt": {
+      "address": ""
     },
-    
     "lpfarm": {
       "list": [
         {
           "name": "OKTLP",
           "address": "",
-          "symbol": "OKTLP",
-          "decimals": 18,
           "allocPoint": 30
         },{
           "name": "USDTLP",
           "address": "",
-          "symbol": "USDTLP",
-          "decimals": 18,
           "allocPoint": 30
         },{
           "name": "BTCLP",
           "address": "",
-          "symbol": "BTCLP",
-          "decimals": 18,
           "allocPoint": 10
         },{
           "name": "ETHLP",
           "address": "",
-          "symbol": "ETHLP",
-          "decimals": 18,
           "allocPoint": 10
         }
       ],
@@ -172,24 +159,22 @@
         {
           "address": "",
           "name": "RBT",
-          "symbol": "RBT",
-          "decimals": 18,
           "allocPoint": 12
         },
         {
-          "address": "0xDa9d14072Ef2262c64240Da3A93fea2279253611",
+          "address": "",
           "name": "OKB",
           "allocPoint": 10
         }, {
-          "address": "0xe579156f9dEcc4134B5E3A30a24Ac46BB8B01281",
+          "address": "",
           "name": "USDT",
           "allocPoint": 10
         }, {
-          "address": "0xDF950cEcF33E64176ada5dD733E170a56d11478E",
+          "address": "",
           "name": "ETHK",
           "allocPoint": 10
         }, {
-          "address": "0x09973e7e3914EB5BA69C7c025F30ab9446e3e4e0",
+          "address": "",
           "name": "BTCK",
           "allocPoint": 10
         }
@@ -222,7 +207,7 @@
         "index": 1,
         "name": "NFT1",
         "symbol": "NFT1",
-        "balance": 5000,
+        "balance": 10000,
         "weeklyMintAmount": 1500,
         "weeklyMintDiscount": 90,
         "period": 604800,
@@ -242,7 +227,7 @@
         "index": 3,
         "name": "NFT3",
         "symbol": "NFT3",
-        "balance": 5000,
+        "balance": 2000,
         "weeklyMintAmount": 300,
         "weeklyMintDiscount": 90,
         "period": 604800,
@@ -267,20 +252,6 @@
         }
       ]
     }
-  },
-  "mainnet": {
-    "erc20": {
-      "address": "0x63726dAe7C57d25e90ec829ce9a5C745Ffd984d3"
-    },
-    "rewardPerBlock": "40000000000",
-    "delay": 30,
-    "fund": "100000000000000000",
-    "lp": [
-      {
-        "address": "0x856e90282961c0e7f6693fd2f62b35d5df9783cf",
-        "allocPoint": 120
-      }
-    ]
   },
   "test": false
 }

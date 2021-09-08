@@ -4,9 +4,11 @@ pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155Receiver.sol";
+
 
 // mock class using ERC1155
-contract NFT1155 is ERC1155, Ownable {
+contract NFT1155 is ERC1155, Ownable, ERC1155Receiver {
     using SafeMath for uint256;
     using SafeMath for uint;
 
@@ -154,17 +156,31 @@ contract NFT1155 is ERC1155, Ownable {
         _currentTokenID++;
     }
 
-    // required function to allow receiving ERC-1155
     function onERC1155Received(
         address operator,
         address from,
         uint256 id,
         uint256 value,
         bytes calldata data
-    )
-        external
-        returns(bytes4)
-    {
-        return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
+    ) external override returns (bytes4) {
+        return (
+            bytes4(
+                keccak256(
+                    "onERC1155Received(address,address,uint256,uint256,bytes)"
+                )
+            )
+        );
+    }
+
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external override returns (bytes4) {
+        //Not allowed
+        revert();
+        return "";
     }
 }

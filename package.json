@@ -8,7 +8,7 @@
   "scripts": {
     "test": "scripts/test.sh",
     "script:deploy-nolock": "truffle compile && truffle exec ./scripts/deploy.js --network development",
-    "script:deploy-lock": "truffle compile && truffle exec ./scripts/deploy.js --network development --unlockAddress 0x37B94b2c5939b35bBF39e0C3507Bd32198bE05b7 --rbt 0x923C2593f2A404546D093e7f70E1Ac17dFa7990b",
+    "script:deploy-lock": "truffle compile && truffle exec ./scripts/deploy.js --network development --unlockAddress 0x36da2aa0484392a2632529fDEbcf08c56A246A62 --rbt 0x2b54D37C0aBa30fd5d948297CeFbc6a0ea527240",
 
     "script:deploy-okex": "truffle compile && truffle exec ./scripts/deploy.js --network okextest",
 
