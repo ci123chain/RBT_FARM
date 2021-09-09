@@ -10,7 +10,7 @@
     "script:deploy-nolock": "truffle compile && truffle exec ./scripts/deploy.js --network development",
     "script:deploy-lock": "truffle compile && truffle exec ./scripts/deploy.js --network development --unlockAddress 0x36da2aa0484392a2632529fDEbcf08c56A246A62 --rbt 0x2b54D37C0aBa30fd5d948297CeFbc6a0ea527240",
 
-    "script:deploy-ci123": "truffle compile && truffle exec ./scripts/deploy.js --network development",
+    "script:deploy-ci123": "truffle compile && truffle exec ./scripts/deploy.js --network ci123",
     "script:deploy-okex": "truffle compile && truffle exec ./scripts/deploy.js --network okextest",
 
     "dev": "truffle migrate --network kovan --reset",

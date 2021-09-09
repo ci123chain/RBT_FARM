@@ -251,7 +251,7 @@ async function main() {
     }
     const retstr = JSON.stringify(ret)
     try {
-        fs.writeFileSync('./output.json', outputstr)
+        fs.writeFileSync('./output.json', retstr)
     } catch (err) {
         console.error(err)
     }
