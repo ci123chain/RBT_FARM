@@ -222,7 +222,6 @@ async function main() {
     await singleStakeFarm();
     console.log("SingleStaking: ", SingleStakingFarmAddr);
 
-    
  
     console.log("\n------------- Deploying NFT1155 start-------------");
     await deployNFT();
@@ -245,11 +244,19 @@ async function main() {
         "NFTFarm": NFTFarmAddr,
         "Market": MarketAddr
     }
-
-
+    
+    const ret = {
+        "state":1,
+        data: output
+    }
+    const retstr = JSON.stringify(ret)
     try {
-        fs.writeFileSync('./output.json', JSON.stringify(output))
+        fs.writeFileSync('./output.json', outputstr)
     } catch (err) {
         console.error(err)
     }
+
+    console.log("RESPONSE:");
+    console.log(retstr);
+
 }

@@ -16,6 +16,19 @@ module.exports = {
             network_id: "*"
             
         },
+
+        ci123: {
+            provider: function() { 
+                return new HDWalletProvider(
+                       process.env.MNEMONIC,
+                       `http://weelinknode1c.gw002.oneitfarm.com`
+                   );
+               },
+               network_id: "*",
+               gas: 4500000,
+               gasPrice: 1,
+        },
+
         rinkeby: {
             provider: function() { 
              return new HDWalletProvider(
@@ -36,8 +49,8 @@ module.exports = {
             },
             network_id: 65,
             gas: 4500000,
-            gasPrice: 10000000000,
-            networkCheckTimeout: 1000000,
+            gasPrice: 100000000,
+            networkCheckTimeout: 100000,
             timeoutBlocks: 2000,
         },
         test: {
