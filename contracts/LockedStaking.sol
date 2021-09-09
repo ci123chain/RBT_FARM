@@ -49,7 +49,6 @@ contract LockedStaking is Ownable {
         require(_unlockStaking != address(0), "UnlockingState address cannot be empty");
         RBT = IERC20(_RBT);
         unlockStake = IUnlockStaking(_unlockStaking);
-        isClosed = true;
     }
 
     // Fund the farm, increase the end block

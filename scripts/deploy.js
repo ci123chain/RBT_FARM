@@ -123,6 +123,9 @@ async function lockedStakeFarm() {
         await lockedStakeFarmIns.add(pool.days, pool.rate);
         console.log("Add to pool with days: ", pool.days, " rate: ", pool.rate)
     }
+
+    console.log("\n------------- Closed LockedStaking-------------");    
+    await lockedStakeFarmIns.close(true);
 }
 
 async function deployNFT() {
@@ -222,6 +225,11 @@ async function main() {
     await singleStakeFarm();
     console.log("SingleStaking: ", SingleStakingFarmAddr);
 
+    console.log("\n------------- Deploying LockedStaking start-------------");
+    await lockedStakeFarm();
+    console.log("LockedStaking Address:", LockedStakeFarmAddr);    
+    
+
  
     console.log("\n------------- Deploying NFT1155 start-------------");
     await deployNFT();
@@ -239,7 +247,7 @@ async function main() {
         "RBT": RBTTokenAddr,
         "LPFarm": LPFarmAddr,
         "SingleStakingFarm": SingleStakingFarmAddr,
-        // "LockedStakingFarm": LockedStakeFarmAddr,
+        "LockedStakingFarm": LockedStakeFarmAddr,
         "NFT1155": NFT1155Addr,
         "NFTFarm": NFTFarmAddr,
         "Market": MarketAddr
