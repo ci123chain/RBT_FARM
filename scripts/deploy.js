@@ -129,12 +129,14 @@ async function lockedStakeFarm() {
 }
 
 async function deployNFT() {
-    nft1155Ins = await NFT1155.new("RBT_NFT1155", "NFT1155", RBTTokenAddr, "")
+    const nftExchangeToken = config.erc1155.exchangeToken.address.length > 0 ? config.erc1155.exchangeToken.address : RBTTokenAddr
+    console.log("use nft exchange token: ", nftExchangeToken)
+    nft1155Ins = await NFT1155.new("RBT_NFT1155", "NFT1155", nftExchangeToken, "")
 
     NFT1155Addr = nft1155Ins.address
     
-    for (index in config.erc1155) {
-        const nft = config.erc1155[index]
+    for (index in config.erc1155.list) {
+        const nft = config.erc1155.list[index]
         await nft1155Ins.addToken(nft.name, nft.balance, nft.weeklyMintAmount, nft.weeklyMintDiscount, nft.period, nft.ipfsUrl, web3.utils.toBN(nft.price))
         await nft1155Ins.mintFor(nft.index)
         console.log("Add NFT Token ", nft.name)
@@ -161,7 +163,9 @@ async function deployNFTFarm() {
 }
 
 async function deployMarket() {
-    marketIns = await Market.new(RBTTokenAddr, NFT1155Addr)
+    const marketToken = config.market.exchangeToken.length > 0 ? config.market.exchangeToken : RBTTokenAddr
+    console.log("use market token: ", marketToken)
+    marketIns = await Market.new(marketToken, NFT1155Addr)
     await nft1155Ins.setApprovalForAll(marketIns.address, true);
     
     MarketAddr = marketIns.address

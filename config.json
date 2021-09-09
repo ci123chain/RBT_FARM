@@ -73,38 +73,44 @@
       "delay": 30
     },
 
-    "erc1155": [
-      {
-        "index": 1,
-        "name": "NFT1",
-        "balance": 5000,
-        "weeklyMintAmount": 1500,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "price": "9900",
-        "ipfsUrl": "1234"
-      }, 
-      {
-        "index": 2,
-        "name": "NFT2",
-        "balance": 5000,
-        "weeklyMintAmount": 750,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "price": "19900",
-        "ipfsUrl": "5678"
-      }, 
-      {
-        "index": 3,
-        "name": "NFT3",
-        "balance": 5000,
-        "weeklyMintAmount": 300,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "price": "59900",
-        "ipfsUrl": "9876"
-      }
-    ],
+    "erc1155": {
+      "exchangeToken": {
+        "desc": "USDT 地址",
+        "address": ""
+      },
+      "list": [
+        {
+          "index": 1,
+          "name": "NFT1",
+          "balance": 5000,
+          "weeklyMintAmount": 1500,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": "9900",
+          "ipfsUrl": "1234"
+        }, 
+        {
+          "index": 2,
+          "name": "NFT2",
+          "balance": 5000,
+          "weeklyMintAmount": 750,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": "19900",
+          "ipfsUrl": "5678"
+        }, 
+        {
+          "index": 3,
+          "name": "NFT3",
+          "balance": 5000,
+          "weeklyMintAmount": 300,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": "59900",
+          "ipfsUrl": "9876"
+        }
+      ]
+    },
     "nftfarm": {
       "delay": 100,
       "rewardPerBlock": 100,
@@ -122,6 +128,10 @@
           "allocPoint": 60
         }
       ]
+    }, 
+    "market": {
+      "desc": "用于交易的token, exchangeToken 为空则使用rbt",
+      "exchangeToken": ""
     }
   },
   "okextest": {
@@ -202,38 +212,44 @@
       "delay": 30
     },
 
-    "erc1155": [
-      {
-        "index": 1,
-        "name": "NFT1",
-        "symbol": "NFT1",
-        "balance": 10000,
-        "weeklyMintAmount": 1500,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "ipfsUrl": "1234"
-      }, 
-      {
-        "index": 2,
-        "name": "NFT2",
-        "symbol": "NFT2",
-        "balance": 5000,
-        "weeklyMintAmount": 750,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "ipfsUrl": "5678"
-      }, 
-      {
-        "index": 3,
-        "name": "NFT3",
-        "symbol": "NFT3",
-        "balance": 2000,
-        "weeklyMintAmount": 300,
-        "weeklyMintDiscount": 90,
-        "period": 604800,
-        "ipfsUrl": "9876"
-      }
-    ],
+    "erc1155":{
+      "exchangeToken": {
+        "desc": "USDT 地址",
+        "address": ""
+      },
+      "list": [
+        {
+          "index": 1,
+          "name": "NFT1",
+          "symbol": "NFT1",
+          "balance": 10000,
+          "weeklyMintAmount": 1500,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "ipfsUrl": "1234"
+        }, 
+        {
+          "index": 2,
+          "name": "NFT2",
+          "symbol": "NFT2",
+          "balance": 5000,
+          "weeklyMintAmount": 750,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "ipfsUrl": "5678"
+        }, 
+        {
+          "index": 3,
+          "name": "NFT3",
+          "symbol": "NFT3",
+          "balance": 2000,
+          "weeklyMintAmount": 300,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "ipfsUrl": "9876"
+        }
+      ]
+    } ,
     "nftfarm": {
       "delay": 100,
       "rewardPerBlock": 100,
@@ -251,6 +267,9 @@
           "allocPoint": 40
         }
       ]
+    }, 
+    "market": {
+      "exchangeToken": ""
     }
   },
   "test": false
