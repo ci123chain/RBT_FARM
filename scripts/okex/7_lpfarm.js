@@ -55,9 +55,9 @@ async function main() {
     if (config.fund) {
         const fund = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.fund))
         await rbtTokenIns.approve(lpFarmIns.address, fund);
-        console.log(`Approve succeed`, fund.valueOf())
+        console.log(`Approve succeed`, fund.toString())
         await lpFarmIns.fund(fund);
-        console.log(`Fund succeed`, fund.valueOf())
+        console.log(`Fund succeed`, fund.toString())
     }
 
     for (index in config.list) {

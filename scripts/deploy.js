@@ -274,15 +274,6 @@ async function main() {
     output["NFT1155"] = NFT1155Addr
     output["NFTFarm"] = NFTFarmAddr
     output["Market"] = MarketAddr
-    // output = {
-    //     "RBT": RBTTokenAddr,
-    //     "LPFarm": LPFarmAddr,
-    //     "SingleStakingFarm": SingleStakingFarmAddr,
-    //     "LockedStakingFarm": LockedStakeFarmAddr,
-    //     "NFT1155": NFT1155Addr,
-    //     "NFTFarm": NFTFarmAddr,
-    //     "Market": MarketAddr
-    // }
     
     const ret = {
         "state":1,

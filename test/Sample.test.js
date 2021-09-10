@@ -9,7 +9,7 @@ contract('NFT1155', ([owner]) => {
     describe('', () => {
         before(async () => {
             // const n1155 = await NFT1155.at("0xC7b7222270a66c1BE931199a63dca6A01a478fDD");
-            const market = await Market.at("0x93B7b12Af006d7d7026495075B3EB9138d5eD305");
+            const market = await Market.at("0xAfC0f2021aE6ae8Bc72d2A8FEF938b6365B29fbB");
             // const nftfarm = await NFTFarm.at("0xED69fe0D3ED9c9086419D35B8C78A30F1e180370");
             // const lockedfarm = await LockedStaking.at("0xD1109010A8296612f2047880c0Af5254031831DC")
             // const singlefarm = await LPFarm.at("0xe9F806017FD66A4a31e752cfAA0A2920542D5baa")
@@ -94,8 +94,13 @@ contract('NFT1155', ([owner]) => {
         // })
 
         it('', async () => {
-            trades = await this.market.getTrades()
-            console.log(trades)
+            usdtaddr = await this.market.erc20Instance()
+            usdt = await RBT.at(usdtaddr)
+            dec = await usdt.decimals()
+            console.log(dec)
+
+            bal = await usdt.balanceOf("0x55CA7bfdE29227D166b719Bc0FA7C0c7D2650528")
+            console.log(bal.toString())
 
             // lpmock1 = await LPMock.at("0x36C9BF5972F67ff9Da359d65Ec60FefBcfe70948")
             // bamock = await lpmock1.balanceOf(this.singlefarm.address)
@@ -104,7 +109,7 @@ contract('NFT1155', ([owner]) => {
             // apy = await this.singlefarm.APYPercent(0)
             // console.log(apy)
 
-            await this.market.cancelTrade(4)
+            // await this.market.cancelTrade(4)
         })
     });
 });
