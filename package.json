@@ -15,6 +15,16 @@
 
     "script:deploy-okex": "truffle compile && truffle exec ./scripts/deploy.js --network okextest",
 
+    "script:deploy-rbt-okex": "truffle compile && truffle exec ./scripts/okex/1_rbt.js --network okextest",
+    "script:deploy-nft1155-okex": "truffle compile && truffle exec ./scripts/okex/2_nft1155.js --network okextest",
+    "script:deploy-nftfarm-okex": "truffle compile && truffle exec ./scripts/okex/3_nftfarm.js --network okextest",
+    "script:deploy-market-okex": "truffle compile && truffle exec ./scripts/okex/4_market.js --network okextest",
+    "script:deploy-single-okex": "truffle compile && truffle exec ./scripts/okex/5_singlefarm.js --network okextest",
+    "script:deploy-lockfarm-okex": "truffle compile && truffle exec ./scripts/okex/6_lockedfarm.js --network okextest",
+
+    "script:deploy-lp-okex": "truffle compile && truffle exec ./scripts/okex/7_lpfarm.js --network okextest",
+
+
     "dev": "truffle migrate --network kovan --reset",
     "devverify": "truffle run verify Farm --network kovan",
     "migrate": "rm -rf build && truffle migrate --network mainnet --reset",
@@ -29,9 +39,6 @@
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.9",
     "@truffle/hdwallet-provider": "^1.2.6",
-    "dotenv": "^8.2.0",
-    "ganache-cli": "^6.12.1",
-    "truffle": "^5.1.52",
-    "truffle-plugin-verify": "^0.5.0"
+    "dotenv": "^8.2.0"
   }
 }

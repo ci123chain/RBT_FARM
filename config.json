@@ -9,12 +9,12 @@
     "lpfarm": {
       "list": [
         {
-          "name": "ERC20 LP Mock",
+          "name": "LP Mock1",
           "symbol": "LPToken1",
           "decimals": 0,
           "allocPoint": 120
         },{
-          "name": "ERC20 LP Mock",
+          "name": "LP Mock2",
           "symbol": "LPToken2",
           "decimals": 0,
           "allocPoint": 60
@@ -76,6 +76,7 @@
     "erc1155": {
       "exchangeToken": {
         "desc": "USDT 地址",
+        "decimals":4,
         "address": ""
       },
       "list": [
@@ -86,7 +87,7 @@
           "weeklyMintAmount": 1500,
           "weeklyMintDiscount": 90,
           "period": 604800,
-          "price": "9900",
+          "price": "99",
           "ipfsUrl": "1234"
         }, 
         {
@@ -96,7 +97,7 @@
           "weeklyMintAmount": 750,
           "weeklyMintDiscount": 90,
           "period": 604800,
-          "price": "19900",
+          "price": "199",
           "ipfsUrl": "5678"
         }, 
         {
@@ -106,7 +107,7 @@
           "weeklyMintAmount": 300,
           "weeklyMintDiscount": 90,
           "period": 604800,
-          "price": "59900",
+          "price": "599",
           "ipfsUrl": "9876"
         }
       ]
@@ -134,27 +135,171 @@
       "exchangeToken": ""
     }
   },
+
   "okextest": {
     "rbt": {
-      "address": ""
+      "name": "RBT",
+      "symbol": "RBT",
+      "decimals": 0,
+      "supply": "4000000000"
     },
     "lpfarm": {
       "list": [
         {
           "name": "OKTLP",
-          "address": "",
+          "address": "0xafcfbef05d6cc75b586e3aff932b27c49dd01f52",
           "allocPoint": 30
         },{
           "name": "USDTLP",
-          "address": "",
+          "address": "0xbbde80a024ca06fd343fffb667efabb82120f6bc",
           "allocPoint": 30
         },{
           "name": "BTCLP",
-          "address": "",
+          "address": "0x91e596c199e833c12eb346ed5a28ab37146ceb23",
           "allocPoint": 10
         },{
           "name": "ETHLP",
-          "address": "",
+          "address": "0x43fca950f437b0086714b4303a2bd17cdc51fcf0",
+          "allocPoint": 10
+        }
+      ],
+      "fund": "99532800",
+      "rewardPerBlock": "100",
+      "rewardBlocks": 21600,
+      "delay": 300
+    },
+
+    "singlestakefarm": {
+      "list": [
+        {
+          "address": "0x3ef8272c2a9740C190F27e92A5aCc509aE1371b8",
+          "name": "RBT",
+          "allocPoint": 12
+        },
+        {
+          "address": "0xDa9d14072Ef2262c64240Da3A93fea2279253611",
+          "name": "OKB",
+          "allocPoint": 10
+        }, {
+          "address": "0xe579156f9dEcc4134B5E3A30a24Ac46BB8B01281",
+          "name": "USDT",
+          "allocPoint": 10
+        }, {
+          "address": "0xDF950cEcF33E64176ada5dD733E170a56d11478E",
+          "name": "ETHK",
+          "allocPoint": 10
+        }, {
+          "address": "0x09973e7e3914EB5BA69C7c025F30ab9446e3e4e0",
+          "name": "BTCK",
+          "allocPoint": 10
+        }
+      ],
+      "fund": "64696320",
+      "rewardPerBlock": "100",
+      "rewardBlocks": 21600,
+      "delay": 300
+    },
+
+    "lockstakefarm":{
+      "list": [
+        {
+          "days": 7,
+          "rate": 115
+        },{
+          "days": 15,
+          "rate": 130
+        },{
+          "days": 30,
+          "rate": 150
+        }
+      ],
+      "fund": "29859840",
+      "delay": 300
+    },
+
+    "erc1155":{
+      "exchangeToken": {
+        "desc": "USDT 地址",
+        "decimals": 10,
+        "address": "0xe579156f9dEcc4134B5E3A30a24Ac46BB8B01281"
+      },
+      "list": [
+        {
+          "index": 1,
+          "name": "NFT1",
+          "balance": 10000,
+          "weeklyMintAmount": 1500,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": 99,
+          "ipfsUrl": "1234"
+        }, 
+        {
+          "index": 2,
+          "name": "NFT2",
+          "balance": 5000,
+          "weeklyMintAmount": 750,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": 199,
+          "ipfsUrl": "5678"
+        }, 
+        {
+          "index": 3,
+          "name": "NFT3",
+          "balance": 2000,
+          "weeklyMintAmount": 300,
+          "weeklyMintDiscount": 90,
+          "period": 604800,
+          "price": 599,
+          "ipfsUrl": "9876"
+        }
+      ]
+    } ,
+    "nftfarm": {
+      "delay": 100,
+      "rewardPerBlock": 100,
+      "rewardBlocks": 21600,
+      "fund": "99532800",
+      "list": [
+        {
+          "index": 1,
+          "allocPoint": 10
+        },{
+          "index": 2,
+          "allocPoint": 30
+        },{
+          "index": 3,
+          "allocPoint": 40
+        }
+      ]
+    }, 
+    "market": {
+      "exchangeToken": ""
+    }
+  },
+
+"ci123": {
+    "rbt": {
+      "address": "0x4d2b4d7f4a09b935e69a3fce69742d3f02551601"
+    },
+    "lpfarm": {
+      "list": [
+        {
+          "name": "OKTLP",
+          "address": "0xafcfbef05d6cc75b586e3aff932b27c49dd01f52",
+          "allocPoint": 30
+        },{
+          "name": "USDTLP",
+          "address": "0xbbde80a024ca06fd343fffb667efabb82120f6bc",
+          "allocPoint": 30
+        },{
+          "name": "BTCLP",
+          "address": "0x91e596c199e833c12eb346ed5a28ab37146ceb23",
+          "allocPoint": 10
+        },{
+          "name": "ETHLP",
+          "address": "0x43fca950f437b0086714b4303a2bd17cdc51fcf0",
           "allocPoint": 10
         }
       ],
@@ -167,24 +312,24 @@
     "singlestakefarm": {
       "list": [
         {
-          "address": "",
+          "address": "0x4d2b4d7f4a09b935e69a3fce69742d3f02551601",
           "name": "RBT",
           "allocPoint": 12
         },
         {
-          "address": "",
+          "address": "0x8e786e8fdb0d08edbf7f2508acae74275fe3b827",
           "name": "OKB",
           "allocPoint": 10
         }, {
-          "address": "",
+          "address": "0x2463a9c556b904310c85a3151b34c88061e988a1",
           "name": "USDT",
           "allocPoint": 10
         }, {
-          "address": "",
+          "address": "0xfa153a1f6a951fe6ddc44dfff6641427ad0c4b24",
           "name": "ETHK",
           "allocPoint": 10
         }, {
-          "address": "",
+          "address": "0xb29a6ec8230236a36c82ca34515c1157003f719c",
           "name": "BTCK",
           "allocPoint": 10
         }
@@ -215,41 +360,42 @@
     "erc1155":{
       "exchangeToken": {
         "desc": "USDT 地址",
-        "address": ""
+        "decimals": 18,
+        "address": "0x2463a9c556b904310c85a3151b34c88061e988a1"
       },
       "list": [
         {
           "index": 1,
           "name": "NFT1",
-          "symbol": "NFT1",
           "balance": 10000,
           "weeklyMintAmount": 1500,
           "weeklyMintDiscount": 90,
           "period": 604800,
+          "price": 99,
           "ipfsUrl": "1234"
         }, 
         {
           "index": 2,
           "name": "NFT2",
-          "symbol": "NFT2",
           "balance": 5000,
           "weeklyMintAmount": 750,
           "weeklyMintDiscount": 90,
           "period": 604800,
+          "price": 199,
           "ipfsUrl": "5678"
         }, 
         {
           "index": 3,
           "name": "NFT3",
-          "symbol": "NFT3",
           "balance": 2000,
           "weeklyMintAmount": 300,
           "weeklyMintDiscount": 90,
           "period": 604800,
+          "price": 599,
           "ipfsUrl": "9876"
         }
       ]
-    } ,
+    },
     "nftfarm": {
       "delay": 100,
       "rewardPerBlock": 100,
@@ -269,7 +415,7 @@
       ]
     }, 
     "market": {
-      "exchangeToken": ""
+      "exchangeToken": "0x2463a9c556b904310c85a3151b34c88061e988a1"
     }
   },
   "test": false

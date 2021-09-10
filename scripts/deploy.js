@@ -15,12 +15,12 @@ const Market = artifacts.require("./Market.sol");
 
 
 const allConfigs = require("../config.json");
-const config = allConfigs.default;
-
+var config = allConfigs.default;
 
 
 let currentAddr;
 
+var rbtDecimals;
 var RBTTokenAddr;
 var LPFarmAddr;
 var SingleStakingFarmAddr;
@@ -37,6 +37,7 @@ let nft1155Ins;
 let nftFarmIns;
 let marketIns;
 
+var output = {}
 
 async function deployRBT() {
     erc20config = config.rbt;
@@ -44,12 +45,14 @@ async function deployRBT() {
         console.log("use exist rbt", erc20config.address)
         RBTTokenAddr = erc20config.address
         rbtTokenIns = await RBT.at(RBTTokenAddr)
+        rbtDecimals = await rbtTokenIns.decimals()
     } else {
         rbtTokenIns = await RBT.new(erc20config.name,
             erc20config.symbol,
             erc20config.decimals,
-            web3.utils.toBN(erc20config.supply));
+            web3.utils.toBN(10).pow(web3.utils.toBN(erc20config.decimals)).mul(web3.utils.toBN(erc20config.supply)));
         RBTTokenAddr = rbtTokenIns.address
+        rbtDecimals = web3.utils.toBN(erc20config.decimals)
     }
 }
 
@@ -60,8 +63,9 @@ async function deployLPFarm() {
     LPFarmAddr = lpFarmIns.address
 
     if (config.lpfarm.fund) {
-        await rbtTokenIns.approve(lpFarmIns.address, web3.utils.toBN(config.lpfarm.fund));
-        await lpFarmIns.fund(web3.utils.toBN(config.lpfarm.fund));
+        const fund = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.lpfarm.fund))
+        await rbtTokenIns.approve(lpFarmIns.address, fund);
+        await lpFarmIns.fund(fund);
     }
 
     for (index in config.lpfarm.list) {
@@ -71,9 +75,11 @@ async function deployLPFarm() {
             lpMock = await LP.new(token.name, token.symbol, token.decimals)
             const amount = web3.utils.toBN(10).pow(web3.utils.toBN(token.decimals)).mul(web3.utils.toBN(1000));
             await lpMock.mint(currentAddr, amount);
+            console.log(`Deploy mock lptoken ${token.name} `, lpMock.address)
         }
         await lpFarmIns.add(token.allocPoint, token.address || lpMock.address, false);
-        console.log("Deploy mock lp ", lpMock.address)
+        output[token.name] = token.address || lpMock.address
+        console.log(`Add ${token.name} token to lpfarm `, token.address || lpMock.address)
     }
 }
 
@@ -85,9 +91,9 @@ async function singleStakeFarm() {
 
     if (config.singlestakefarm.fund) {
         console.log("Fund to SingleStakeFarm ", config.singlestakefarm.fund)
-
-        await rbtTokenIns.approve(singleStakeFarmIns.address, web3.utils.toBN(config.singlestakefarm.fund));
-        await singleStakeFarmIns.fund(web3.utils.toBN(config.singlestakefarm.fund));
+        const fund = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.singlestakefarm.fund))
+        await rbtTokenIns.approve(singleStakeFarmIns.address, fund);
+        await singleStakeFarmIns.fund(fund);
     }
 
     for (index in config.singlestakefarm.list) {
@@ -97,9 +103,11 @@ async function singleStakeFarm() {
             lpMock = await LP.new(token.name, token.symbol, token.decimals)
             const amount = web3.utils.toBN(10).pow(web3.utils.toBN(token.decimals)).mul(web3.utils.toBN(1000));
             await lpMock.mint(currentAddr, amount);
+            console.log(`Deploy mock singlestake token ${token.name} `, token.address || lpMock.address)
         }
         await singleStakeFarmIns.add(token.allocPoint, token.address || lpMock.address, false);
-        console.log("Deploy mock singlestake ", lpMock.address)
+        output[token.name] = token.address || lpMock.address
+        console.log(`Add ${token.name} token to singlefarm `, token.address || lpMock.address)
     }
 }
 
@@ -113,9 +121,9 @@ async function lockedStakeFarm() {
 
     if (config.lockstakefarm.fund) {
         console.log("Fund to LockedStakeFarm ", config.lockstakefarm.fund)
-
-        await rbtTokenIns.approve(LockedStakeFarmAddr, web3.utils.toBN(config.lockstakefarm.fund));
-        await lockedStakeFarmIns.fund(web3.utils.toBN(config.lockstakefarm.fund));
+        const fund = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.lockstakefarm.fund))
+        await rbtTokenIns.approve(LockedStakeFarmAddr, fund);
+        await lockedStakeFarmIns.fund(fund);
     }
 
     for (index in config.lockstakefarm.list) {
@@ -123,8 +131,7 @@ async function lockedStakeFarm() {
         await lockedStakeFarmIns.add(pool.days, pool.rate);
         console.log("Add to pool with days: ", pool.days, " rate: ", pool.rate)
     }
-
-    console.log("\n------------- Closed LockedStaking-------------");    
+    console.log("Closed LockedStaking");    
     await lockedStakeFarmIns.close(true);
 }
 
@@ -132,12 +139,13 @@ async function deployNFT() {
     const nftExchangeToken = config.erc1155.exchangeToken.address.length > 0 ? config.erc1155.exchangeToken.address : RBTTokenAddr
     console.log("use nft exchange token: ", nftExchangeToken)
     nft1155Ins = await NFT1155.new("RBT_NFT1155", "NFT1155", nftExchangeToken, "")
-
+    const decimals = config.erc1155.exchangeToken.decimals
     NFT1155Addr = nft1155Ins.address
-    
     for (index in config.erc1155.list) {
         const nft = config.erc1155.list[index]
-        await nft1155Ins.addToken(nft.name, nft.balance, nft.weeklyMintAmount, nft.weeklyMintDiscount, nft.period, nft.ipfsUrl, web3.utils.toBN(nft.price))
+        // decimals - 1 是因为 price 不支持小数本身乘以了10
+        const bigPrice = web3.utils.toBN(10).pow(web3.utils.toBN(decimals - 1)).mul(web3.utils.toBN(nft.price));
+        await nft1155Ins.addToken(nft.name, nft.balance, nft.weeklyMintAmount, nft.weeklyMintDiscount, nft.period, nft.ipfsUrl, bigPrice)
         await nft1155Ins.mintFor(nft.index)
         console.log("Add NFT Token ", nft.name)
     }
@@ -151,8 +159,9 @@ async function deployNFTFarm() {
 
     if (config.nftfarm.fund) {
         console.log("Fund to NFTFarm ", config.nftfarm.fund)
-        await rbtTokenIns.approve(NFTFarmAddr, web3.utils.toBN(config.nftfarm.fund));
-        await nftFarmIns.fund(web3.utils.toBN(config.nftfarm.fund));
+        const fund = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.nftfarm.fund))
+        await rbtTokenIns.approve(NFTFarmAddr, fund);
+        await nftFarmIns.fund(fund);
     }
 
     for (index in config.nftfarm.list) {
@@ -196,10 +205,21 @@ module.exports = function(callback) {
 
 async function main() {
 
-    let { unlockAddress, rbt } = require('yargs')
+    let { unlockAddress, rbt, network } = require('yargs')
     .option('unlock', { alias: 'unlockAddress', describe: 'unlockstaking string', type: 'string' })
     .option('rbt', { alias: 'rbtAddress', describe: 'rbt address string', type: 'string' })
+    .option('n', { alias: 'network', describe: 'network', type: 'string' })
     .parse()
+
+    if (network == "ci123") {
+        console.log("-----use config for ci123------")
+        config = allConfigs.ci123;
+    } else if (network == "okextest") {
+        console.log("-----use config for okextest------")
+        config = allConfigs.okextest;
+    } else {
+        console.log("-----use default config------")
+    }
 
     if (unlockAddress && unlockAddress.length > 0) {
         SingleStakingFarmAddr = unlockAddress
@@ -247,15 +267,22 @@ async function main() {
     await deployMarket();
     console.log("Market: ", MarketAddr);
 
-    const output = {
-        "RBT": RBTTokenAddr,
-        "LPFarm": LPFarmAddr,
-        "SingleStakingFarm": SingleStakingFarmAddr,
-        "LockedStakingFarm": LockedStakeFarmAddr,
-        "NFT1155": NFT1155Addr,
-        "NFTFarm": NFTFarmAddr,
-        "Market": MarketAddr
-    }
+    output["RBT"] = RBTTokenAddr
+    output["LPFarm"] = LPFarmAddr
+    output["SingleStakingFarm"] = SingleStakingFarmAddr
+    output["LockedStakingFarm"] = LockedStakeFarmAddr
+    output["NFT1155"] = NFT1155Addr
+    output["NFTFarm"] = NFTFarmAddr
+    output["Market"] = MarketAddr
+    // output = {
+    //     "RBT": RBTTokenAddr,
+    //     "LPFarm": LPFarmAddr,
+    //     "SingleStakingFarm": SingleStakingFarmAddr,
+    //     "LockedStakingFarm": LockedStakeFarmAddr,
+    //     "NFT1155": NFT1155Addr,
+    //     "NFTFarm": NFTFarmAddr,
+    //     "Market": MarketAddr
+    // }
     
     const ret = {
         "state":1,

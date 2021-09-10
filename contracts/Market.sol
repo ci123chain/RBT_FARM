@@ -33,6 +33,7 @@ contract Market is Ownable, ERC1155Receiver {
 
     // Info of the trade.
     struct Trade {
+        uint256 tradeid;
         address seller;
         uint256 amount; 
         uint256 price;
@@ -66,7 +67,9 @@ contract Market is Ownable, ERC1155Receiver {
         require(nftInstance.balanceOf(msg.sender, id_) >= number, "no enough tokens to create new trade");
 
         nftInstance.safeTransferFrom(msg.sender, address(this), id_, number, '0x');
+        uint256 tradeid = trades.length;
         trades.push(Trade({
+            tradeid: tradeid,
             seller: msg.sender,
             amount: number,
             price: price_,
@@ -74,7 +77,7 @@ contract Market is Ownable, ERC1155Receiver {
             status: Open
         }));
 
-        emit NewTrade(trades.length.sub(1), msg.sender, number, price_);
+        emit NewTrade(tradeid, msg.sender, number, price_);
     }
 
     // Cancel trade with trade_id
