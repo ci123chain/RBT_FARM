@@ -5,7 +5,6 @@ const NFT1155 = artifacts.require("./token/NFT1155.sol");
 var config =  {
     "exchangeToken": {
       "desc": "USDT 地址",
-      "decimals": 10,
       "address": "0xe579156f9dEcc4134B5E3A30a24Ac46BB8B01281"
     },
     "list": [
@@ -52,12 +51,14 @@ async function main() {
     nft1155Ins = await NFT1155.new("RBT_NFT1155", "NFT1155", nftExchangeToken, "")
     NFT1155Addr = nft1155Ins.address
     console.log("NFT1155 Created", NFT1155Addr)
-    const decimals = config.exchangeToken.decimals
-    
+
+    const erc20Temp = await RBT.at(nftExchangeToken)
+    const decimals = await erc20Temp.decimals()
+
     for (index in config.list) {
         const nft = config.list[index]
-        // decimals - 1 是因为 price 不支持小数本身乘以了10
-        const bigPrice = web3.utils.toBN(10).pow(web3.utils.toBN(decimals - 1)).mul(web3.utils.toBN(nft.price));
+        // 除以10 是因为 price 不支持小数本身乘以了10
+        const bigPrice = web3.utils.toBN(10).pow(decimals).div(web3.utils.toBN(10)).mul(web3.utils.toBN(nft.price));
         await nft1155Ins.addToken(nft.name, nft.balance, nft.weeklyMintAmount, nft.weeklyMintDiscount, nft.period, nft.ipfsUrl, bigPrice)
         console.log("Add NFT Token ", nft.name)
         await nft1155Ins.mintFor(nft.index)

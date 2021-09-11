@@ -59,7 +59,8 @@ async function deployRBT() {
 async function deployLPFarm() {
     const currentBlock = await getCurrentBlock();
     const startBlock = web3.utils.toBN(currentBlock).add(web3.utils.toBN(config.lpfarm.delay))
-    lpFarmIns = await LPFarm.new(RBTTokenAddr, web3.utils.toBN(config.lpfarm.rewardPerBlock),  web3.utils.toBN(config.lpfarm.rewardBlocks), startBlock)
+    const bigReward = web3.utils.toBN(10).pow(rbtDecimals).mul(web3.utils.toBN(config.lpfarm.rewardPerBlock))
+    lpFarmIns = await LPFarm.new(RBTTokenAddr, bigReward,  web3.utils.toBN(config.lpfarm.rewardBlocks), startBlock)
     LPFarmAddr = lpFarmIns.address
 
     if (config.lpfarm.fund) {
@@ -139,12 +140,13 @@ async function deployNFT() {
     const nftExchangeToken = config.erc1155.exchangeToken.address.length > 0 ? config.erc1155.exchangeToken.address : RBTTokenAddr
     console.log("use nft exchange token: ", nftExchangeToken)
     nft1155Ins = await NFT1155.new("RBT_NFT1155", "NFT1155", nftExchangeToken, "")
-    const decimals = config.erc1155.exchangeToken.decimals
+    const erc20Temp = await RBT.at(nftExchangeToken)
+    const decimals = await erc20Temp.decimals()
     NFT1155Addr = nft1155Ins.address
     for (index in config.erc1155.list) {
         const nft = config.erc1155.list[index]
-        // decimals - 1 是因为 price 不支持小数本身乘以了10
-        const bigPrice = web3.utils.toBN(10).pow(web3.utils.toBN(decimals - 1)).mul(web3.utils.toBN(nft.price));
+        // 除以10 是因为 price 不支持小数本身乘以了10
+        const bigPrice = web3.utils.toBN(10).pow(decimals).div(web3.utils.toBN(10)).mul(web3.utils.toBN(nft.price));
         await nft1155Ins.addToken(nft.name, nft.balance, nft.weeklyMintAmount, nft.weeklyMintDiscount, nft.period, nft.ipfsUrl, bigPrice)
         await nft1155Ins.mintFor(nft.index)
         console.log("Add NFT Token ", nft.name)

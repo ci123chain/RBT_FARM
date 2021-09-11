@@ -73,7 +73,7 @@ contract NFT1155 is ERC1155, Ownable, ERC1155Receiver {
 
     function mintFor(uint256 id_) public {
         NFTInfo storage info = tokens[id_];
-        require(info.used == true, "token not existed");
+        require(info.used == true, "pool not existed");
 
         RewardInfo storage rinfo = rewardInfos[id_];
         uint256 intervaldays = (now - info.created).div(rinfo.mintInterval);
@@ -88,19 +88,6 @@ contract NFT1155 is ERC1155, Ownable, ERC1155Receiver {
         }
     }
 
-    function buyone(uint256 id_) public {
-        address buyer = msg.sender;
-        NFTInfo storage info = tokens[id_];
-        require(info.used == true, "token not existed");
-
-        require(balanceOf(owner(), id_) > 0, "not enough to sell");
-        require(usdtAddr.balanceOf(buyer) > info.price, "not enough to buy");
-
-        usdtAddr.transferFrom(buyer, owner(), info.price);
-        safeTransferFrom(address(this), buyer, id_, 1, '0x');
-
-        emit NFTSelled(id_, buyer, 1);
-    }
 
     function computer(uint256 id_, uint256 date) private returns (uint256) {
         RewardInfo storage rewardInfo = rewardInfos[id_];

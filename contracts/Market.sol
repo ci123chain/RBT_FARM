@@ -53,7 +53,6 @@ contract Market is Ownable, ERC1155Receiver {
         uint256 price;
         (, price, ) = nftInstance.poolInfo(id_);
         address owner = nftInstance.getOwner();
-
         require(nftInstance.balanceOf(owner, id_) > 0, "not enough to sell");
         require(erc20Instance.allowance(buyer, address(this)) >= price, "not enough allowance to buy");
 

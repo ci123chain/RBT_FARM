@@ -3,7 +3,7 @@
     "rbt": {
       "name": "RBT",
       "symbol": "RBT",
-      "decimals": 0,
+      "decimals": 18,
       "supply": "400000000"
     },
     "lpfarm": {
@@ -76,7 +76,6 @@
     "erc1155": {
       "exchangeToken": {
         "desc": "USDT 地址",
-        "decimals":4,
         "address": ""
       },
       "list": [
@@ -220,7 +219,6 @@
     "erc1155":{
       "exchangeToken": {
         "desc": "USDT 地址",
-        "decimals": 10,
         "address": "0xe579156f9dEcc4134B5E3A30a24Ac46BB8B01281"
       },
       "list": [
@@ -281,7 +279,7 @@
 
 "ci123": {
     "rbt": {
-      "address": "0x4d2b4d7f4a09b935e69a3fce69742d3f02551601"
+      "address": "0x1367e2a9760dcd121f2c10929aa78dcf3d8efa78"
     },
     "lpfarm": {
       "list": [
@@ -312,7 +310,7 @@
     "singlestakefarm": {
       "list": [
         {
-          "address": "0x4d2b4d7f4a09b935e69a3fce69742d3f02551601",
+          "address": "0x1367e2a9760dcd121f2c10929aa78dcf3d8efa78",
           "name": "RBT",
           "allocPoint": 12
         },
@@ -360,7 +358,6 @@
     "erc1155":{
       "exchangeToken": {
         "desc": "USDT 地址",
-        "decimals": 18,
         "address": "0x2463a9c556b904310c85a3151b34c88061e988a1"
       },
       "list": [
