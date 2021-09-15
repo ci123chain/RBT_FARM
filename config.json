@@ -4,7 +4,23 @@
       "name": "RBT",
       "symbol": "RBT",
       "decimals": 18,
-      "supply": "400000000"
+      "supply": "400000000",
+      "privInvest": {
+        "percents": "6",
+        "releaseRate": "10",
+        "list" : [
+          "0xCd0D8BE8554B084733B31ca214770d45460b8C0a",
+          "0x55256b18bdbeFD3cB91dAe01861a96fECD3A5ada",
+          "0x4B8705eEBC2462f9D75BEE20B5ecae78DceDb757",
+          "0x0102046346999d79DE540608dC5d0aa0C7dB0d92",
+          "0xCd0D8BE8554B084733B31ca214770d45460b8C0a"
+        ],
+        "amount": [10, 15, 20, 20, 35]
+      },
+      "teamInvest": {
+        "percents": "5",
+        "releaseRate": "5"
+      }
     },
     "lpfarm": {
       "list": [
@@ -279,25 +295,25 @@
 
 "ci123": {
     "rbt": {
-      "address": "0x1367e2a9760dcd121f2c10929aa78dcf3d8efa78"
+      "address": "0xdaf181b52344a22e9c87deb59ad901ae2a7c8fa8"
     },
     "lpfarm": {
       "list": [
         {
           "name": "OKTLP",
-          "address": "0xafcfbef05d6cc75b586e3aff932b27c49dd01f52",
+          "address": "0x01f0a57a1fa6034c4baffcda769a5a340c2b7559",
           "allocPoint": 30
         },{
           "name": "USDTLP",
-          "address": "0xbbde80a024ca06fd343fffb667efabb82120f6bc",
+          "address": "0xd1109010a8296612f2047880c0af5254031831dc",
           "allocPoint": 30
         },{
           "name": "BTCLP",
-          "address": "0x91e596c199e833c12eb346ed5a28ab37146ceb23",
+          "address": "0x9dd4f2eb563185c7871ba629323ccf5bbad44552",
           "allocPoint": 10
         },{
           "name": "ETHLP",
-          "address": "0x43fca950f437b0086714b4303a2bd17cdc51fcf0",
+          "address": "0xd00292e6681b1d8e8edc5aba43ee0938c9ed687a",
           "allocPoint": 10
         }
       ],
@@ -310,24 +326,24 @@
     "singlestakefarm": {
       "list": [
         {
-          "address": "0x1367e2a9760dcd121f2c10929aa78dcf3d8efa78",
+          "address": "0xdaf181b52344a22e9c87deb59ad901ae2a7c8fa8",
           "name": "RBT",
           "allocPoint": 12
         },
         {
-          "address": "0x8e786e8fdb0d08edbf7f2508acae74275fe3b827",
+          "address": "0xa372075bdc5cdfabe28e31eb730d35fe6e55c1d0",
           "name": "OKB",
           "allocPoint": 10
         }, {
-          "address": "0x2463a9c556b904310c85a3151b34c88061e988a1",
+          "address": "0xfee69cf0b0ba1d3b4fc6c3f1da196bc20460d212",
           "name": "USDT",
           "allocPoint": 10
         }, {
-          "address": "0xfa153a1f6a951fe6ddc44dfff6641427ad0c4b24",
+          "address": "0x4bff388e928e75abd4816f01f8cf195b7dbd3cec",
           "name": "ETHK",
           "allocPoint": 10
         }, {
-          "address": "0xb29a6ec8230236a36c82ca34515c1157003f719c",
+          "address": "0xafe06710fd1d30f6a13074ea318d16a695b40181",
           "name": "BTCK",
           "allocPoint": 10
         }
@@ -358,7 +374,7 @@
     "erc1155":{
       "exchangeToken": {
         "desc": "USDT 地址",
-        "address": "0x2463a9c556b904310c85a3151b34c88061e988a1"
+        "address": "0xfee69cf0b0ba1d3b4fc6c3f1da196bc20460d212"
       },
       "list": [
         {
@@ -412,7 +428,7 @@
       ]
     }, 
     "market": {
-      "exchangeToken": "0x2463a9c556b904310c85a3151b34c88061e988a1"
+      "exchangeToken": "0xfee69cf0b0ba1d3b4fc6c3f1da196bc20460d212"
     }
   },
   "test": false

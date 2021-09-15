@@ -5,10 +5,10 @@ const { waitUntilBlock } = require('./helpers/tempo')(web3);
 
 contract('LPFarm', ([owner, alice, bob, carl]) => {
     before(async () => {
-
-        this.erc20 = await ERC20.new("Mock token", "MOCK", 0, 1000000);
+        initbal = web3.utils.toBN(10).pow(web3.utils.toBN(18)).mul(web3.utils.toBN(10000))
+        this.erc20 = await ERC20.new("Mock token", "MOCK", 0, initbal);
         let balance = await this.erc20.balanceOf(owner);
-        assert.equal(balance.valueOf(), 1000000);
+        assert.equal(balance.toString(), initbal.toString());
 
         this.lp = await LP.new("LP Token", "LP", 0);
         this.lp2 = await LP.new("LP Token 2", "LP2", 0);
@@ -26,9 +26,23 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
         await this.farm.fund(20000);
     });
 
+    describe('when created', () => {
+        it('is linked to the Mock ERC20 token', async () => {
+            initbal = web3.utils.toBN(10).pow(web3.utils.toBN(18)).mul(web3.utils.toBN(99999));
+            await this.lp.mint(owner, initbal)
+            balOwner = await this.lp.balanceOf(owner)
+            await this.lp.approve(this.farm.address, initbal)
+            await this.farm.deposit(0, initbal)
+            a = await this.farm.deposited(0, owner)
+            console.log(a)
+        });
+    });
+    return 
+
     before(async () => {
+
         await Promise.all([
-            this.lp.mint(alice, 5000),
+            this.lp.mint(alice, 1500),
             this.lp.mint(bob, 500),
             this.lp.mint(carl, 2000),
         ]);
@@ -515,7 +529,5 @@ contract('LPFarm', ([owner, alice, bob, carl]) => {
             const pendingCarl = await this.farm.pending(1, carl);
             assert.equal(416, pendingCarl);
         });
-
-        
     });
 });

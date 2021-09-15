@@ -7,7 +7,7 @@ const { waitUntilBlock } = require('./helpers/tempo')(web3);
 contract('Deploy Unlocking Farm', ([owner, alice, bob, carl]) => {
     before(async () => {
         this.erc20 = await ERC20.new("Mock token", "MOCK", 0, 1000000);
-        let balance = await this.erc20.balanceOf(owner);
+        balance = await this.erc20.balanceOf(owner);
         assert.equal(balance.valueOf(), 1000000);
 
         await this.erc20.transfer(alice, 2000, {from: owner});
@@ -111,10 +111,57 @@ contract('Deploy Unlocking Farm', ([owner, alice, bob, carl]) => {
             }
             assert.fail('withdraw successful');
         });
+        
+        it('demo', async () => {
+            stakedBefore = await this.erc20.balanceOf(this.lockstake.address);
+            await this.erc20.approve(this.lockstake.address, 200, {from: owner});
+            sig = web3.eth.abi.encodeFunctionCall({
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                  }
+                ],
+                "name": "transferFrom",
+                "outputs": [
+                  {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                  }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+              }, [owner, this.lockstake.address, 20]);
+            console.log(sig)
 
+            0x23b872dd00000000000000000000000055ca7bfde29227d166b719bc0fa7c0c7d26505280000000000000000000000002bc8712ff9bee1fbb337cecfdc34438ec40fada20000000000000000000000000000000000000000000000000000000000000014
+    
+            functionsig = web3.eth.abi.encodeFunctionSignature('transferFrom(address,address,uint256)')
+            param = web3.eth.abi.encodeParameters(['address','address','uint256'], [owner, this.lockstake.address, 20]);
+            console.log(functionsig)
+            console.log(param)            
+    
+            // sigappend = sig.concat(this.erc20.address.substring(2))
+            // await this.lockstake.invoke(sigappend)
+            // const stakedAfter = await this.erc20.balanceOf(this.lockstake.address);
+            // assert.equal(20, stakedAfter - stakedBefore);
+        });
         
     });
 
+   
     // describe('In dev_mode', () => {
     //     it('withdraw', async () => {
     //         await this.lockstake.withdraw_dev(1, {from: alice}); 

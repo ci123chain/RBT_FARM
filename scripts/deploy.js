@@ -47,10 +47,29 @@ async function deployRBT() {
         rbtTokenIns = await RBT.at(RBTTokenAddr)
         rbtDecimals = await rbtTokenIns.decimals()
     } else {
-        rbtTokenIns = await RBT.new(erc20config.name,
+        rbtTokenIns = await RBT.new(
+            erc20config.name,
             erc20config.symbol,
             erc20config.decimals,
-            web3.utils.toBN(10).pow(web3.utils.toBN(erc20config.decimals)).mul(web3.utils.toBN(erc20config.supply)));
+            getByWei(erc20config.supply, erc20config.decimals),
+            erc20config.privInvest.percents,
+            erc20config.privInvest.releaseRate,
+            erc20config.teamInvest.percents,
+            erc20config.teamInvest.releaseRate,
+            );
+
+        if (erc20config.privInvest.list && 
+            erc20config.privInvest.list.length > 0 ) {
+                await rbtTokenIns.addPrivInvs(erc20config.privInvest.list, erc20config.privInvest.amount)  
+                console.log("adding priv Investment")  
+        }
+
+        if (erc20config.teamInvest.list && 
+            erc20config.teamInvest.list.length > 0 ) {
+                await rbtTokenIns.addTeamInvs(erc20config.teamInvest.list, erc20config.teamInvest.amount)  
+                console.log("adding team Investment")  
+        }
+        
         RBTTokenAddr = rbtTokenIns.address
         rbtDecimals = web3.utils.toBN(erc20config.decimals)
     }
@@ -182,6 +201,9 @@ async function deployMarket() {
     MarketAddr = marketIns.address
 }
 
+function getByWei(amount, decimals) {
+    return web3.utils.toBN(10).pow(web3.utils.toBN(decimals)).mul(web3.utils.toBN(amount))
+}
 
 async function getCurrentBlock() {
     const currentBlock = await web3.eth.getBlockNumber();
